@@ -207,7 +207,7 @@
   }
   document.querySelectorAll('.activity-filter').forEach(function(button){button.addEventListener('click',function(){filter=button.getAttribute('data-filter');document.querySelectorAll('.activity-filter').forEach(function(other){var active=other===button;other.classList.toggle('is-active',active);other.setAttribute('aria-pressed',active?'true':'false')});render()})});
   $('dashboardRefresh').addEventListener('click',load);
-  window.addEventListener('storage',function(event){if(!event.key||event.key==='sst.fieldlog.v1'||event.key==='sst.breathlog.v1')load()});
+  window.addEventListener('storage',function(event){if(event.key==='sst.landing.theme'){if(event.newValue==='light'||event.newValue==='dark')document.documentElement.setAttribute('data-theme',event.newValue);return}if(!event.key||event.key==='sst.fieldlog.v1'||event.key==='sst.breathlog.v1')load()});
   load();
 })();
 
