@@ -6,10 +6,11 @@ An optional, isolated MIOTPL landing page for the Space Security Team concept. I
 
 - `templates/layouts/space_security_layout.html` — document shell, metadata, font loading, and stylesheet.
 - `templates/pages/space_security_home.html` — Mustache-compatible landing page.
-- `public/space-security/space-security.css` — responsive editorial styling with dark/light themes.
+- `public/space-security/space-security.css` — responsive editorial/dashboard styling with dark/light themes.
+- `public/space-security/dashboard.js` — read-only controller for combined local tracker summaries and activity.
 - `routines/SPACETEAM.m` — public page and isolated static-asset route handlers.
 
-The page uses standard HTML/CSS and the MIOTPL `RENDERPAGE^MIOTPL` layout/page pattern. It does not require client-side JavaScript, a framework, external image assets, or Mustache extensions beyond the documented engine behavior.
+The page uses standard HTML/CSS and the MIOTPL `RENDERPAGE^MIOTPL` layout/page pattern. The dashboard uses a small framework-free JavaScript asset; it requires no external JavaScript libraries, image assets, or Mustache extensions beyond the documented engine behavior.
 
 ## Register the routes
 
@@ -30,7 +31,7 @@ The deployed static handler uses the confirmed working MIOSTATIC configuration: 
 
 - **Positioning:** a self-directed human-development project framed as a Milky Way / space-security training program.
 - **First objective:** a cigarette-cessation field log, with future logging and progress visualization described as planned functionality.
-- **Dashboard visual:** explicitly labeled demo data; no real tracker or calculations are implied.
+- **Dashboard:** the root page reads both local field logs and shows live summaries and a combined activity feed. The older chart illustration remains clearly labeled as a visual example.
 - **MUMPS learning:** presented as an intellectual-training path and a way to build real software on the open-source MUMPS.IO foundation.
 - **Cannabis:** the founder's personal-experiment premise is acknowledged, but the page does not endorse cannabis as a nicotine/addiction treatment. It calls out health and dependence risks and commits to distinguishing anecdote from evidence.
 - **Privacy:** describes intended pseudonymous/data-minimal design. It explicitly avoids claiming HIPAA compliance or current readiness to store sensitive data.
