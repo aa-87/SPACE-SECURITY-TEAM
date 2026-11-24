@@ -2,14 +2,14 @@
 
 **Live codename deployment:** [https://efuhair.com](https://efuhair.com)
 
-A MUMPS.IO / MIOTPL project with an editorial landing page and two standalone, browser-local field logs.
+A MUMPS.IO / MIOTPL project with a unified local-first command dashboard and two standalone, browser-local field logs.
 
 ## Project structure
 
 - `routines/SPACETEAM.m` — root landing-page route and public static-file route.
 - `templates/layouts/space_security_layout.html` — page shell and stylesheet reference.
-- `templates/pages/space_security_home.html` — landing page.
-- `public/space-security/space-security.css` — landing-page styling and theme support.
+- `templates/pages/space_security_home.html` — root command dashboard, live cross-log summaries, and project landing content.
+- `public/space-security/space-security.css` — responsive landing/dashboard styling and shared theme support.
 - `public/space-security/tracker/index.html` — Field Log 001, smoking cessation observations.
 - `public/space-security/breath-log/index.html` — Field Log 002, retrospective breath observation log.
 - `scripts/sync-to-mumpsio.sh` — copies the project integration files into a local MUMPS.IO checkout.
@@ -76,3 +76,15 @@ The founder's experience during leg-injury recovery is presented as personal his
 Both field logs store data in the current browser profile using `localStorage`; they do not upload entries, require accounts, or use cloud synchronization. This app does not encrypt browser-local data. Anyone with access to the browser profile may be able to view it, and clearing browser storage may erase it. Users should export backups when needed.
 
 These are personal tracking tools, not medical advice, diagnostic devices, or clinical services. The project does not claim HIPAA compliance.
+
+## Unified command dashboard
+
+The root page (`/`) reads both field logs from the same browser origin and displays combined counts, cessation summaries, the latest breath-observation duration, and a filterable recent-activity feed. It reads these existing local-storage keys:
+
+- `sst.fieldlog.v1` — cessation tracker state, including `entries`.
+- `sst.breathlog.v1` — breath-observation entry array.
+
+The dashboard is a read-only view: it does not rewrite, merge, transmit, or migrate either log's data. Each tracker remains independently usable at its existing URL. Updates made in another tab are reflected through the browser `storage` event; returning to or refreshing the dashboard reloads its summaries.
+
+The dashboard and both trackers share the `sst.landing.theme` preference for light/dark mode. Existing tracker data formats and storage keys remain unchanged. Because browser local storage is scoped to the exact origin, records created on a different domain, subdomain, protocol, or browser profile will not automatically appear here. Export/import remains the way to move backups between environments.
+
