@@ -1,8 +1,7 @@
 # Space Security Team — landing page + Field Log 001 (https://efuhair.com)
 ## https://chatgpt.com/share/6b05b6c1-0554-83e9-ac2e-c9c6238bdb8c
 
-
-![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuharis.gif)
+![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/space-team-2.gif)
 
 A MUMPS.IO / MIOTPL landing page plus a standalone, local-first cigarette-cessation field-log prototype.
 
@@ -34,3 +33,5 @@ You can also open `public/space-security/tracker/index.html` directly in a moder
 - This is a personal tracking prototype, not medical advice, a clinical device, or a HIPAA-compliant service. Browser-local storage is not encrypted by this app; anyone with access to the same browser profile may be able to view the data.
 
 The existing SOUT files are not included or modified.
+
+![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuharis.gif)
