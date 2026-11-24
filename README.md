@@ -1,44 +1,78 @@
-# Space Security Team — landing page + Field Log 001 (https://efuhair.com [codename])
-## https://chatgpt.com/share/6b05b6c1-0554-83e9-ac2e-c9c6238bdb8c
+# Space Security Team
 
-![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/space-team-2.gif)
+**Live codename deployment:** [https://efuhair.com](https://efuhair.com)
 
-A MUMPS.IO / MIOTPL landing page plus a standalone, local-first cigarette-cessation field-log prototype.
+A MUMPS.IO / MIOTPL project with an editorial landing page and two standalone, browser-local field logs.
 
-## Included
+## Project structure
 
-- `templates/` — MIOTPL page and layout for the project overview.
-- `public/space-security/space-security.css` — responsive landing-page styling.
-- `public/space-security/tracker/index.html` — standalone tracker application (HTML, CSS, SVG and JavaScript in one file).
-- `routines/SPACETEAM.m` — existing public landing-page and static-file routes.
-- `docs/` — setup, product behavior, privacy boundaries, and verification notes.
+- `routines/SPACETEAM.m` — root landing-page route and public static-file route.
+- `templates/layouts/space_security_layout.html` — page shell and stylesheet reference.
+- `templates/pages/space_security_home.html` — landing page.
+- `public/space-security/space-security.css` — landing-page styling and theme support.
+- `public/space-security/tracker/index.html` — Field Log 001, smoking cessation observations.
+- `public/space-security/breath-log/index.html` — Field Log 002, retrospective breath observation log.
+- `scripts/sync-to-mumpsio.sh` — copies the project integration files into a local MUMPS.IO checkout.
+- `docs/` — setup, product behavior, safety, privacy, and verification notes.
 
-## Quick integration
+## Confirmed working MIOSTATIC configuration
 
-Copy `templates/`, `public/`, and `routines/SPACETEAM.m` into the matching locations in your MUMPS.IO checkout. Register `REG^SPACETEAM(.CONF)` after `INIT^MIOROUTE` and before `COMPILE^MIOROUTE`. Keep the application's existing static setup and route registrations.
+The deployed application uses this exact mount/root pair in `STATIC^SPACETEAM`:
 
-The overview is `/space-security`. The standalone tracker is served by the existing static wildcard route at `/public/space-security/tracker/index.html`. It does not require a separate MUMPS route or MIOTPL template rendering.
+```mumps
+SET CONF("server","static","mount")="/public"
+SET CONF("server","static","root")="public"
+DO STATIC^MIOSTATIC(.DEV,.CONF,.REQ,.CTX)
+```
 
-## Standalone use
+**Preserve this exact configuration for future changes.** The `/public/*path` route strips the `/public` URL prefix and resolves the remaining path under the `public/` filesystem directory. For example, `/public/space-security/space-security.css` maps to `public/space-security/space-security.css`.
 
-You can also open `public/space-security/tracker/index.html` directly in a modern browser. It has no build step, package manager, framework, remote API, font dependency, or external asset dependency.
+Do not change the mount to `/public/space-security` while keeping the root as `public`; do not add a competing `/public/space-security/*path` route.
 
-## Important behavior and boundaries
+## Routes
 
-- Dark and light themes are included.
-- SVG graphics and a dynamically drawn craving chart are inline.
-- Entries and baseline settings are stored in this browser's `localStorage` only. There is no account, server persistence, analytics, or sync.
-- Users can export/import JSON and delete all local data.
-- Tobacco/cannabis composition is a user-entered observation, not a recommended ratio or preparation guide. The application does not claim that smoked cannabis/tobacco is a proven cessation treatment or safe alternative.
-- This is a personal tracking prototype, not medical advice, a clinical device, or a HIPAA-compliant service. Browser-local storage is not encrypted by this app; anyone with access to the same browser profile may be able to view the data.
+- `GET /` — landing page.
+- `GET /space-security` — legacy alias.
+- `GET /public/*path` and `HEAD /public/*path` — static assets.
 
-The existing SOUT files are not included or modified.
+Both field logs and the landing stylesheet are served through the same public static route.
 
-![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuharis.gif)
+## Integrate into MUMPS.IO
 
+From this repository, run:
 
-## Field Log 002 — breath observation
+```bash
+chmod +x scripts/sync-to-mumpsio.sh
+./scripts/sync-to-mumpsio.sh ../mumps.io
+```
 
-The standalone local-only breath observation log is available at `/public/space-security/breath-log/index.html`. It records individual durations entered retrospectively, date/time, and optional context. It supports local history, JSON export/import, and deletion. It deliberately has no live hold timer, countdown, targets, coaching, or performance scoring. Breath-holding can cause fainting or drowning; read the safety notice in the app. The project documents the founder's personal experience during leg-injury recovery without claiming that breath-holding improves cardiovascular fitness or replaces exercise.
+Pass the absolute path to your MUMPS.IO checkout if it is not a sibling directory. The script copies the routine, templates, public assets, and project documentation into their corresponding locations without overwriting MUMPS.IO's top-level README.
 
-The canonical landing page is `/`; `/space-security` remains a legacy alias. Both field logs are static files under the existing `/public/space-security` mount.
+Register the module in the application's existing startup sequence, before route compilation:
+
+```mumps
+D INIT^MIOROUTE
+D START^MIOTPL(.CONF)
+D REG^SPACETEAM(.CONF)
+D COMPILE^MIOROUTE
+```
+
+If route initialization and MIOTPL startup already occur elsewhere, add only `D REG^SPACETEAM(.CONF)` before the existing route compilation. Avoid registering the module twice.
+
+## Field logs
+
+### Field Log 001 — smoking cessation
+
+A standalone local-first log for cigarette use, cravings, triggers, notes, and personal observations. It supports JSON export/import and deletion. User-entered tobacco/cannabis composition is recorded as personal observation, not recommended use or an evidence-based cessation treatment.
+
+### Field Log 002 — breath observation
+
+A standalone local-only log for durations entered retrospectively, date/time, optional context, and notes. It supports history, JSON export/import, and deletion. It deliberately has no live hold timer, countdown, targets, coaching, streaks, or performance scoring. Its safety notice explains fainting and drowning risks and advises against practicing in or near water, while driving or standing, alone, or after hyperventilation.
+
+The founder's experience during leg-injury recovery is presented as personal history, not evidence that breath-holding improves cardiovascular fitness or replaces exercise.
+
+## Privacy and limitations
+
+Both field logs store data in the current browser profile using `localStorage`; they do not upload entries, require accounts, or use cloud synchronization. This app does not encrypt browser-local data. Anyone with access to the browser profile may be able to view it, and clearing browser storage may erase it. Users should export backups when needed.
+
+These are personal tracking tools, not medical advice, diagnostic devices, or clinical services. The project does not claim HIPAA compliance.
