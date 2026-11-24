@@ -109,3 +109,19 @@ SET CONF("server","static","root")="public"
 ```
 
 The deployment is intentionally presented under the codename URL `https://efuhair.com` for an added level of obscurity.
+
+
+## Unified local command dashboard
+
+The root landing page now includes a live command dashboard that reads the two existing browser-local tracker stores without changing either data format:
+
+- Cessation tracker: `localStorage["sst.fieldlog.v1"]`, with entries in `state.entries`.
+- Breath observation log: `localStorage["sst.breathlog.v1"]`, an array of observation records.
+
+The dashboard presents cigarette-entry quantity totals, average recorded craving intensity, breath observation count and latest recorded duration, combined record totals, and a filterable recent activity feed. These are summaries of user-entered records, not medical conclusions, cessation outcomes, or breath-hold performance recommendations.
+
+The dashboard is read-only. It does not modify or merge the source records, upload them, or require an account. Both logs remain independently usable at their existing URLs. Browser storage events refresh the dashboard when a separate same-origin tab writes to either store; returning to the dashboard or using its refresh control also reloads data.
+
+The dashboard, cessation tracker, and breath observation log use the shared theme preference `sst.landing.theme`. Existing tracker data keys and schemas are preserved. Browser local storage is origin- and profile-specific: records stored under another hostname, subdomain, protocol, or browser profile are not automatically shared. Use each tool's JSON export/import features for manual backup or transfer.
+
+The breath-observation feed remains descriptive only. It does not rank durations, set targets, coach breath-holding, or provide medical advice.
