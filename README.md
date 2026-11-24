@@ -1,4 +1,4 @@
-![](https://github.com/aa-87/TK-POP/blob/main/docs/TK-POP.gif)
+![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuharis.gif)
 
 # Space Security Team landing page [codename efuhair.com for now]
 
