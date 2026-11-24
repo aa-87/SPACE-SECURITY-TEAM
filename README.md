@@ -1,4 +1,4 @@
-# Space Security Team — landing page + Field Log 001 (https://efuhair.com)
+# Space Security Team — landing page + Field Log 001 (https://efuhair.com [codename])
 ## https://chatgpt.com/share/6b05b6c1-0554-83e9-ac2e-c9c6238bdb8c
 
 ![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/space-team-2.gif)
