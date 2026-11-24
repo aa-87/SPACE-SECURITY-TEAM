@@ -49,3 +49,10 @@ The static handler uses an isolated `/public/space-security` mount rooted at `pu
 ## MIOTPL reference
 
 See [`docs/MIOTPL.md`](https://github.com/aa-87/mumps.io/blob/main/docs/MIOTPL.md) in the MUMPS.IO repository for template discovery, layout rendering, escaping, sections, and caching behavior.
+
+
+## Root URL and Field Log 002 update
+
+The canonical landing page is now `GET /`. The existing `GET /space-security` route may remain as a legacy alias. The overview links to Field Log 001 at `/public/space-security/tracker/index.html` and Field Log 002 at `/public/space-security/breath-log/index.html`.
+
+Field Log 002 is implemented as a standalone offline/local-only duration observation log. It accepts retrospective duration entries and provides history, JSON export/import, and deletion. It intentionally omits a live hold timer, countdown, targets, coaching, and performance prompts. Its safety notice explains fainting and drowning risks and warns against water, driving, standing, practicing alone, and hyperventilation. The founder's leg-injury recovery experience is identified as personal context, not evidence of cardiovascular benefit.
