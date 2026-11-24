@@ -6,7 +6,7 @@ An optional, isolated MIOTPL landing page for the Space Security Team concept. I
 
 - `templates/layouts/space_security_layout.html` — document shell, metadata, font loading, and stylesheet.
 - `templates/pages/space_security_home.html` — Mustache-compatible landing page.
-- `public/space-security/space-security.css` — responsive dark-only black/red editorial styling.
+- `public/space-security/space-security.css` — responsive editorial styling with dark/light themes.
 - `routines/SPACETEAM.m` — public page and isolated static-asset route handlers.
 
 The page uses standard HTML/CSS and the MIOTPL `RENDERPAGE^MIOTPL` layout/page pattern. It does not require client-side JavaScript, a framework, external image assets, or Mustache extensions beyond the documented engine behavior.
@@ -22,9 +22,9 @@ D REG^SPACETEAM(.CONF)
 D COMPILE^MIOROUTE
 ```
 
-If the application already initializes MIOROUTE and MIOTPL, add only `D REG^SPACETEAM(.CONF)` before its existing `COMPILE^MIOROUTE` call. The public page is `GET /space-security`; the stylesheet is served from `/public/space-security/space-security.css`.
+If the application already initializes MIOROUTE and MIOTPL, add only `D REG^SPACETEAM(.CONF)` before its existing `COMPILE^MIOROUTE` call. The public landing page is `GET /`; `/space-security` remains a legacy alias. The stylesheet is served from `/public/space-security/space-security.css`.
 
-The static handler uses an isolated `/public/space-security` mount rooted at `public`. It does not change the framework's global static mount. Keep this route registration alongside the application's existing modules; do not register it twice.
+The deployed static handler uses the confirmed working MIOSTATIC configuration: `CONF("server","static","mount")="/public"` and `CONF("server","static","root")="public"`. The `/public/*path` route serves all nested public assets. Preserve this exact mount/root pair and do not add a competing `/public/space-security/*path` handler. Keep the route registration alongside the application's existing modules; do not register it twice.
 
 ## Product and content decisions
 
@@ -41,7 +41,7 @@ The static handler uses an isolated `/public/space-security` mount rooted at `pu
 
 1. Confirm `SPACETEAM.m` is in the active MUMPS routine path and compiles in the target YottaDB/GT.M environment.
 2. Register routes before `COMPILE^MIOROUTE` and verify `^MIO("ROUTE","COMPILE","ok")=1`.
-3. Request `/space-security` and verify the rendered page is returned.
+3. Request `/` and verify the rendered page is returned (the `/space-security` alias may also be checked).
 4. Request `/public/space-security/space-security.css` and verify `text/css` is returned.
 5. Check the page at mobile and desktop widths, with keyboard navigation and reduced-motion preferences.
 6. Before implementing accounts or a tracker, define threat model, data minimization, encryption, access control, auditability, retention/deletion, backup, incident response, and operational responsibilities. Do not describe the service as HIPAA compliant unless a qualified compliance review establishes that claim.
@@ -53,7 +53,7 @@ See [`docs/MIOTPL.md`](https://github.com/aa-87/mumps.io/blob/main/docs/MIOTPL.m
 
 ## Root URL and Field Log 002 update
 
-The canonical landing page is now `GET /`. The existing `GET /space-security` route may remain as a legacy alias. The overview links to Field Log 001 at `/public/space-security/tracker/index.html` and Field Log 002 at `/public/space-security/breath-log/index.html`.
+The canonical landing page is `GET /`. The existing `GET /space-security` route remains a legacy alias. The overview links to Field Log 001 at `/public/space-security/tracker/index.html` and Field Log 002 at `/public/space-security/breath-log/index.html`.
 
 Field Log 002 is implemented as a standalone offline/local-only duration observation log. It accepts retrospective duration entries and provides history, JSON export/import, and deletion. It intentionally omits a live hold timer, countdown, targets, coaching, and performance prompts. Its safety notice explains fainting and drowning risks and warns against water, driving, standing, practicing alone, and hyperventilation. The founder's leg-injury recovery experience is identified as personal context, not evidence of cardiovascular benefit.
 
@@ -97,3 +97,15 @@ D COMPILE^MIOROUTE
 ```
 
 The `SPACETEAM` registration provides `GET /` for the landing page and `GET/HEAD /public/*path` for static files. If the module is already registered by the application, do not register it a second time.
+
+
+## Confirmed deployment configuration
+
+The user has confirmed that the following exact MIOSTATIC configuration is working in the live deployment at https://efuhair.com. Keep this pair unchanged in future work unless the static URL structure or filesystem layout is intentionally redesigned:
+
+```mumps
+SET CONF("server","static","mount")="/public"
+SET CONF("server","static","root")="public"
+```
+
+The deployment is intentionally presented under the codename URL `https://efuhair.com` for an added level of obscurity.
