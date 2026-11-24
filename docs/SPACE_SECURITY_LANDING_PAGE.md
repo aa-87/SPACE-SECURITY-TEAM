@@ -56,3 +56,44 @@ See [`docs/MIOTPL.md`](https://github.com/aa-87/mumps.io/blob/main/docs/MIOTPL.m
 The canonical landing page is now `GET /`. The existing `GET /space-security` route may remain as a legacy alias. The overview links to Field Log 001 at `/public/space-security/tracker/index.html` and Field Log 002 at `/public/space-security/breath-log/index.html`.
 
 Field Log 002 is implemented as a standalone offline/local-only duration observation log. It accepts retrospective duration entries and provides history, JSON export/import, and deletion. It intentionally omits a live hold timer, countdown, targets, coaching, and performance prompts. Its safety notice explains fainting and drowning risks and warns against water, driving, standing, practicing alone, and hyperventilation. The founder's leg-injury recovery experience is identified as personal context, not evidence of cardiovascular benefit.
+
+
+## Static asset routing: important mount/root pairing
+
+The Space Security static handler uses the existing catch-all route `/public/*path`. The handler sets:
+
+```mumps
+SET CONF("server","static","mount")="/public"
+SET CONF("server","static","root")="public"
+DO STATIC^MIOSTATIC(.DEV,.CONF,.REQ,.CTX)
+```
+
+This pairing is intentional. `MIOSTATIC` removes the URL mount (`/public`) and joins the remaining relative path to the filesystem root (`public`). Therefore:
+
+- `/public/space-security/space-security.css` maps to `public/space-security/space-security.css`.
+- `/public/space-security/tracker/index.html` maps to `public/space-security/tracker/index.html`.
+- `/public/space-security/breath-log/index.html` maps to `public/space-security/breath-log/index.html`.
+
+Do not set the root to `public` while setting the mount to `/public/space-security`: that strips the `space-security` directory from the URL path and produces the wrong filesystem path. Avoid registering a second overlapping `/public/space-security/*path` handler; the single `/public/*path` route already serves all nested public assets.
+
+## Copying this project into a MUMPS.IO checkout
+
+The repository includes `scripts/sync-to-mumpsio.sh`. From the Space Security Team checkout, run:
+
+```bash
+chmod +x scripts/sync-to-mumpsio.sh
+./scripts/sync-to-mumpsio.sh ../mumps.io
+```
+
+Pass an absolute path instead if the MUMPS.IO checkout is elsewhere. The script copies the Space Security routine, templates, static assets, and relevant docs into their matching MUMPS.IO directories. It deliberately does not overwrite MUMPS.IO's top-level README or other application files.
+
+After copying, register the module and rebuild the route table in your MUMPS.IO startup flow:
+
+```mumps
+D INIT^MIOROUTE
+D START^MIOTPL(.CONF)
+D REG^SPACETEAM(.CONF)
+D COMPILE^MIOROUTE
+```
+
+The `SPACETEAM` registration provides `GET /` for the landing page and `GET/HEAD /public/*path` for static files. If the module is already registered by the application, do not register it a second time.
