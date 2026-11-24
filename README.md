@@ -35,3 +35,10 @@ You can also open `public/space-security/tracker/index.html` directly in a moder
 The existing SOUT files are not included or modified.
 
 ![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuharis.gif)
+
+
+## Field Log 002 — breath observation
+
+The standalone local-only breath observation log is available at `/public/space-security/breath-log/index.html`. It records individual durations entered retrospectively, date/time, and optional context. It supports local history, JSON export/import, and deletion. It deliberately has no live hold timer, countdown, targets, coaching, or performance scoring. Breath-holding can cause fainting or drowning; read the safety notice in the app. The project documents the founder's personal experience during leg-injury recovery without claiming that breath-holding improves cardiovascular fitness or replaces exercise.
+
+The canonical landing page is `/`; `/space-security` remains a legacy alias. Both field logs are static files under the existing `/public/space-security` mount.
