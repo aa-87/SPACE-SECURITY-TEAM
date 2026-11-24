@@ -1,4 +1,6 @@
 # Space Security Team — landing page + Field Log 001
+|             | |
+|ChatGPT chat| https://chatgpt.com/share/6b05b6c1-0554-83e9-ac2e-c9c6238bdb8c |
 
 A MUMPS.IO / MIOTPL landing page plus a standalone, local-first cigarette-cessation field-log prototype.
 
