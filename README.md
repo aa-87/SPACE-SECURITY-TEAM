@@ -1,36 +1,32 @@
-![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuharis.gif)
+# Space Security Team — landing page + Field Log 001
 
-# Space Security Team landing page [codename efuhair.com for now]
+A MUMPS.IO / MIOTPL landing page plus a standalone, local-first cigarette-cessation field-log prototype.
 
-A coming-soon landing page built for the MIOTPL Mustache templating system in [aa-87/mumps.io](https://github.com/aa-87/mumps.io).
+## Included
 
-See [`docs/SPACE_SECURITY_LANDING_PAGE.md`](docs/SPACE_SECURITY_LANDING_PAGE.md) for installation and route registration.
+- `templates/` — MIOTPL page and layout for the project overview.
+- `public/space-security/space-security.css` — responsive landing-page styling.
+- `public/space-security/tracker/index.html` — standalone tracker application (HTML, CSS, SVG and JavaScript in one file).
+- `routines/SPACETEAM.m` — existing public landing-page and static-file routes.
+- `docs/` — setup, product behavior, privacy boundaries, and verification notes.
 
 ## Quick integration
 
-Copy the included `templates/`, `public/`, and `routines/SPACETEAM.m` files into the matching locations in your MUMPS.IO checkout. Register `REG^SPACETEAM(.CONF)` after `INIT^MIOROUTE` and before `COMPILE^MIOROUTE`. Then visit `/space-security`.
+Copy `templates/`, `public/`, and `routines/SPACETEAM.m` into the matching locations in your MUMPS.IO checkout. Register `REG^SPACETEAM(.CONF)` after `INIT^MIOROUTE` and before `COMPILE^MIOROUTE`. Keep the application's existing static setup and route registrations.
 
-## Dealing with serving files:
-Files are served from the public directory. The config below can be shared across different apps registered within the MIO.m routine. 
-See Below
-```
-INIT(CONF)
-	DO BOOTCONF(.CONF)
-	DO INIT^MIOROUTE
-	;DO START^MIOTPL(.CONF)
-	;DO REG^MIOPLGD(.CONF)
-	;DO REG^MIOHEALTH(.CONF)
-	;DO REG^MIOERRC(.CONF)
-	;DO REG^MIOOS(.CONF)
-	SET CONF("server","static","enabled")=1
-	;SET CONF("server","static","dirListing","enabled")=1
-	SET CONF("server","static","root")="public"
-	SET CONF("server","static","mount")="public"
-	DO REG^MIOSTATIC(.CONF)
-	DO REG^SPACETEAM(.CONF)
-	DO COMPILE^MIOROUTE
-	DO SYNCCONF(.CONF)
-	DO START^MIOCLEAN(.CONF)
-	QUIT
-	;
-```
+The overview is `/space-security`. The standalone tracker is served by the existing static wildcard route at `/public/space-security/tracker/index.html`. It does not require a separate MUMPS route or MIOTPL template rendering.
+
+## Standalone use
+
+You can also open `public/space-security/tracker/index.html` directly in a modern browser. It has no build step, package manager, framework, remote API, font dependency, or external asset dependency.
+
+## Important behavior and boundaries
+
+- Dark and light themes are included.
+- SVG graphics and a dynamically drawn craving chart are inline.
+- Entries and baseline settings are stored in this browser's `localStorage` only. There is no account, server persistence, analytics, or sync.
+- Users can export/import JSON and delete all local data.
+- Tobacco/cannabis composition is a user-entered observation, not a recommended ratio or preparation guide. The application does not claim that smoked cannabis/tobacco is a proven cessation treatment or safe alternative.
+- This is a personal tracking prototype, not medical advice, a clinical device, or a HIPAA-compliant service. Browser-local storage is not encrypted by this app; anyone with access to the same browser profile may be able to view the data.
+
+The existing SOUT files are not included or modified.
