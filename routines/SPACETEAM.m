@@ -1,4 +1,15 @@
 SPACETEAM ; Space Security Team coming-soon landing page
+	;#################################################################
+	;#                                                               #
+	;# Copyright (c) 2027 EFUZY LLC [not registered yet. DON8 plz]   #
+	;# and/or its subsidiaries.  All rights reserved.                #
+	;#                                                               #
+	;#   This source code contains the intellectual property         #
+	;#   of its copyright holder(s), and is made available           #
+	;#   under a license.  If you do not know the terms of           #
+	;#   the license, please stop and do not read further.           #
+	;#                                                               #
+	;#################################################################	
 	;
 	; Optional public landing-page module for MUMPS.IO.;
 	; Register with REG^SPACETEAM(.CONF) after INIT^MIOROUTE and
