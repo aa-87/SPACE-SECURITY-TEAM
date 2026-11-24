@@ -13,7 +13,7 @@ SPACETEAM ; Space Security Team coming-soon landing page
 	;
 	; Optional public landing-page module for MUMPS.IO.;
 	; Register with REG^SPACETEAM(.CONF) after INIT^MIOROUTE and
-	; before COMPILE^MIOROUTE. Public page: GET /space-security.;
+	; before COMPILE^MIOROUTE. Public page: GET /.;
 	; No account, waitlist, or personal-data collection is implemented.;
 	;
 	QUIT
@@ -26,8 +26,6 @@ REG(CONF)
 	DO ADDM^MIOROUTE("GET","/public/*path","STATIC^SPACETEAM",.META)
 	DO ADDM^MIOROUTE("HEAD","/public/*path","STATIC^SPACETEAM",.META)
 	DO ADDM^MIOROUTE("GET","/space-security","HOME^SPACETEAM",.META)
-	DO ADDM^MIOROUTE("GET","/public/space-security/*path","STATIC^SPACETEAM",.META)
-	DO ADDM^MIOROUTE("HEAD","/public/space-security/*path","STATIC^SPACETEAM",.META)
 	QUIT
 	;
 HOME(DEV,CONF,REQ,CTX)
@@ -40,8 +38,12 @@ HOME(DEV,CONF,REQ,CTX)
 	QUIT
 	;
 STATIC(DEV,CONF,REQ,CTX)
-	; Isolated static mount; does not change the application's other mounts.;
-	SET CONF("server","static","mount")="/public/space-security"
+	; The /public/*path route captures the path relative to /public.
+	; MIOSTATIC joins that relative path to this filesystem root.
+	; Keep the mount/root pair aligned: /public -> ./public.
+	; This serves /public/space-security/... as public/space-security/...
+	; without changing the global MIOSTATIC configuration or other mounts.
+	SET CONF("server","static","mount")="/public"
 	SET CONF("server","static","root")="public"
 	DO STATIC^MIOSTATIC(.DEV,.CONF,.REQ,.CTX)
 	QUIT
