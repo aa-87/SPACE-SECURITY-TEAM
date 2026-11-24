@@ -2,6 +2,8 @@
 ## https://chatgpt.com/share/6b05b6c1-0554-83e9-ac2e-c9c6238bdb8c
 
 
+![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuharis.gif)
+
 A MUMPS.IO / MIOTPL landing page plus a standalone, local-first cigarette-cessation field-log prototype.
 
 ## Included
