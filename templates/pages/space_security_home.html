@@ -1,15 +1,17 @@
 <a class="skip-link" href="#main">Skip to mission</a>
 <header class="topbar">
-  <a class="brand" href="/space-security" aria-label="Space Security Team home">
+  <a class="brand" href="/" aria-label="Space Security Team home">
     <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
     <span class="brand-name">SPACE SECURITY<span>TEAM / EARTH DIVISION</span></span>
   </a>
   <nav class="topnav" aria-label="Main navigation">
     <a href="#protocol">THE PROTOCOL</a>
     <a href="#training">TRAINING</a>
-    <a href="/public/space-security/tracker/index.html">OPEN FIELD LOG <b aria-hidden="true">↗</b></a>
+    <a href="/public/space-security/tracker/index.html">CESSATION LOG <b aria-hidden="true">↗</b></a>
+    <a href="/public/space-security/breath-log/index.html">BREATH LOG <b aria-hidden="true">↗</b></a>
     <a class="nav-cta" href="#brief">READ THE BRIEF <b aria-hidden="true">↘</b></a>
   </nav>
+  <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch to light theme" title="Switch theme">◐ THEME</button>
 </header>
 
 <main id="main">
@@ -100,13 +102,33 @@
     </div>
   </section>
 
+  <section class="dark-band" id="breath-log">
+    <div class="shell training-shell">
+      <div class="section-head"><p class="eyebrow">02 / FIELD LOG 002</p><span class="micro">AVAILABLE NOW / OFFLINE / LOCAL ONLY</span></div>
+      <h2>Record the breath.<br><em>Keep the context.</em></h2>
+      <div class="protocol-grid">
+        <div>
+          <p class="section-lede">A standalone observation log for recording individual breath-hold durations, dates, and optional context. Durations are entered after the fact; this is not a live hold timer, training plan, or fitness test.</p>
+          <p class="body-copy">The founder reports finding breath-hold practice personally useful during recovery from a leg injury, when typical cardio activity was difficult. That experience is preserved as personal history, not proof of improved cardiovascular fitness or a substitute for exercise.</p>
+          <a class="button button-red" href="/public/space-security/breath-log/index.html">OPEN BREATH OBSERVATION LOG <span>↗</span></a>
+          <p class="demo-disclaimer">Local browser storage · JSON export/import · No accounts or cloud sync</p>
+        </div>
+        <div class="tracker-card"><div class="tracker-head"><span>FIELD LOG / 002</span><span>LOCAL RECORD</span></div><div class="tracker-main"><div><span class="metric-label">OBSERVATION HISTORY</span><strong>— —</strong><small>NO TARGETS / NO PERFORMANCE SCORE</small></div><div class="metric-stamp">LOG<br>02</div></div><div class="tracker-footer"><span>RECORD</span><span>REFLECT</span><span>KEEP IT PERSONAL</span></div></div>
+      </div>
+      <div class="cannabis-note"><span class="caution-mark">!</span><p><strong>Safety before duration.</strong> Breath-holding can cause dizziness, fainting, blackout, or drowning. Never practice in or near water, while driving or standing, alone, after hyperventilation, or where fainting could cause injury. The log has no live timer, countdown, targets, or coaching. Consult a qualified clinician about individual suitability.</p></div>
+    </div>
+  </section>
   <section class="closing shell">
     <p class="eyebrow"><span class="status-light"></span> PRE-LAUNCH / NO ACCOUNTS YET</p>
     <h2>Start with one honest<br><em>observation.</em></h2>
-    <p>The application is being shaped. Until the first field tools are ready, follow the open-source foundation and watch this space.</p>
+    <p>Both standalone field tools are available now. Keep the record honest, private, and grounded in your own experience.</p>
     <a class="button button-red" href="/public/space-security/tracker/index.html">OPEN THE FIELD LOG <span aria-hidden="true">↗</span></a>
     <a class="quiet-link" href="https://github.com/aa-87/mumps.io" target="_blank" rel="noopener">EXPLORE THE MUMPS.IO REPOSITORY <span aria-hidden="true">↗</span></a>
   </section>
 </main>
 
 <footer class="footer shell"><a class="brand" href="/space-security"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-name">SPACE SECURITY<span>TEAM / EARTH DIVISION</span></span></a><p>AN OPEN-ENDED HUMAN EXPERIMENT.</p><span>BUILT ON MUMPS.IO <b>✳</b></span></footer>
+
+<script>
+(function(){var root=document.documentElement,btn=document.getElementById('themeToggle'),key='sst.landing.theme';function set(t){root.setAttribute('data-theme',t);if(btn){btn.setAttribute('aria-label',t==='light'?'Switch to dark theme':'Switch to light theme');btn.setAttribute('aria-pressed',t==='light'?'true':'false');}var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#f3f1ed':'#08090b');}var t=null;try{t=localStorage.getItem(key);}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';set(t);if(btn)btn.addEventListener('click',function(){var n=root.getAttribute('data-theme')==='light'?'dark':'light';set(n);try{localStorage.setItem(key,n);}catch(e){}});})();
+</script>
