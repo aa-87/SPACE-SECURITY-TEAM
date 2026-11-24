@@ -10,6 +10,7 @@ A MUMPS.IO / MIOTPL project with a unified local-first command dashboard and two
 - `templates/layouts/space_security_layout.html` — page shell and stylesheet reference.
 - `templates/pages/space_security_home.html` — root command dashboard, live cross-log summaries, and project landing content.
 - `public/space-security/space-security.css` — responsive landing/dashboard styling and shared theme support.
+- `public/space-security/dashboard.js` — read-only cross-log dashboard controller.
 - `public/space-security/tracker/index.html` — Field Log 001, smoking cessation observations.
 - `public/space-security/breath-log/index.html` — Field Log 002, retrospective breath observation log.
 - `scripts/sync-to-mumpsio.sh` — copies the project integration files into a local MUMPS.IO checkout.
