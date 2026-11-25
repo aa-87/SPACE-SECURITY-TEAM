@@ -1,0 +1,26 @@
+'use strict';
+const assert=require('node:assert/strict');
+const D=require('../public/space-security/local-data.js');
+const store=()=>{const m=new Map();return {getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k),dump:()=>JSON.stringify([...m.entries()].sort())}};
+const date='2026-11-25T10:00:00Z';
+const c={id:'c',when:date,type:'cigarette',quantity:2,craving:'5',trigger:'After waking',notes:'test'};
+const b={id:'b',date,seconds:12,context:'',notes:''};
+const m={id:'m',date,kind:'Regular milk',source:'Food',symptoms:'None noticed',notes:'',ml:200,calcium:null};
+const j={id:'j',date,scope:'milk',title:'test',body:'reflection'};
+const s=store();
+for(const [k,v] of Object.entries({c:{...D.empty('c'),entries:[c]},b:[b],m:[m],j:[j]})){D.write(s,k,v,null);assert.deepEqual(D.read(s,k).value,v)}
+const backup=D.backup(s,'dark');assert.equal(D.parse(backup).m.length,1);
+assert.throws(()=>D.write(s,'m',[],null),/another tab/);
+assert.throws(()=>D.validate('c',{...D.empty('c'),entries:[{...c,quantity:'<img>'}]}));
+assert.throws(()=>D.validate('b',[{...b,date:'bad date'}]));
+assert.throws(()=>D.validate('m',[m,m]));
+assert.equal(D.note({...j,scope:'both'}),true);
+assert.equal(D.note({...j,scope:'all'}),true);
+const legacy=JSON.parse(JSON.stringify(backup));delete legacy.data.milk;
+D.restore(s,legacy,true);assert.deepEqual(D.read(s,'m').value,[m]);
+const before=s.dump();assert.throws(()=>D.restore(s,{...backup,data:{...backup.data,milk:[m,m]}},true));assert.equal(s.dump(),before);
+const merged=JSON.parse(JSON.stringify(backup));merged.data.journal=[{...j,body:'changed'}];D.restore(s,merged,false);assert.equal(D.read(s,'j').value[0].body,'changed');
+let writes=0;const failed={...s,setItem(k,v){if(++writes===2)throw Error('quota');s.setItem(k,v)}};const prior=s.dump();assert.throws(()=>D.restore(failed,backup,true),/rolled back/);assert.equal(s.dump(),prior);
+const fresh=store();D.restore(fresh,backup,false);assert.deepEqual(D.read(fresh,'c').value.profile,backup.data.cessation.profile);
+s.setItem(D.keys.j,'{bad');assert.throws(()=>D.backup(s,'dark'));assert.equal(s.getItem(D.keys.j),'{bad');
+console.log('Local data regression suite passed');
