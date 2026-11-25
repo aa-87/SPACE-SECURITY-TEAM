@@ -1,6 +1,7 @@
 (function(){
 'use strict';
 var K={c:'sst.fieldlog.v1',b:'sst.breathlog.v1',j:'sst.journal.v1',m:'sst.milklog.v1',t:'sst.landing.theme'},$=function(x){return document.getElementById(x)},notes=[],snapshot=null,ready=false;var D=window.SSTData;
+if(window.SSTDemo){document.getElementById('demoBanner').hidden=false;document.getElementById('demoLink').hidden=true;document.getElementById('journalForm').hidden=true;document.getElementById('data-management').hidden=true;document.getElementById('journalList').textContent='Fictional reflections are available in the timeline. Exit demo to write or manage your private journal.';document.getElementById('journalCount').textContent='READ-ONLY PREVIEW';document.querySelector('.journal-list-controls').hidden=true;return}
 function now(){var d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
 function id(){return window.crypto&&window.crypto.randomUUID?window.crypto.randomUUID():'j'+Date.now().toString(36)+Math.random().toString(36).slice(2)}
 function validDate(x){return typeof x==='string'&&!isNaN(new Date(x).getTime())}
