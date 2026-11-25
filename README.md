@@ -1,54 +1,145 @@
-# Space Security Team  (https://efuhair.com)
- 
-![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuhair.gif)
-A MUMPS.IO / MIOTPL project with a unified local-first command dashboard and two standalone, browser-local field logs.
+# Space Security Team
 
-## Project structure
+**Your observations. Your context.**
 
-- `routines/SPACETEAM.m` — root landing-page route and public static-file route.
-- `templates/layouts/space_security_layout.html` — page shell and stylesheet reference.
-- `templates/pages/space_security_home.html` — root command dashboard, live cross-log summaries, and project landing content.
-- `public/space-security/space-security.css` — responsive landing/dashboard styling and shared theme support.
-- `public/space-security/dashboard.js` — read-only cross-log dashboard controller.
-- `public/space-security/tracker/index.html` — Field Log 001, smoking cessation observations.
-- `public/space-security/breath-log/index.html` — Field Log 002, retrospective breath observation log.
-- `scripts/sync-to-mumpsio.sh` — copies the project integration files into a local MUMPS.IO checkout.
-- `docs/` — setup, product behavior, safety, privacy, and verification notes.
+A privacy-first personal observation workspace built on [MUMPS.IO](https://github.com/aa-87/mumps.io), YottaDB/GT.M and the MIOTPL server-side templating engine. Three specialized trackers, one private journal, and a shared dashboard help users record and revisit personal experiences without accounts, cloud synchronization, or gamification.
 
-## Confirmed working MIOSTATIC configuration
+[Live project — efuhair.com](https://efuhair.com/) · [Sample dashboard](https://efuhair.com/?demo=1) · [Technical documentation](docs/SPACE_SECURITY_LANDING_PAGE.md) · [Browser CI](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions/workflows/browser-tests.yml)
 
-The deployed application uses this exact mount/root pair in `STATIC^SPACETEAM`:
+[![Browser regression](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions/workflows/browser-tests.yml/badge.svg)](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions/workflows/browser-tests.yml)
 
-```mumps
-SET CONF("server","static","mount")="/public"
-SET CONF("server","static","root")="public"
-DO STATIC^MIOSTATIC(.DEV,.CONF,.REQ,.CTX)
+**Status:** v0.1.0 release candidate. The live codename deployment may lag behind repository changes. The CI badge reports automated fixture tests, not certification of the live MUMPS server.
+
+![Space Security Team application demonstration](docs/efuhair.gif)
+
+*Recorded project demonstration; appearance may differ from the current release candidate.*
+
+## Contents
+
+- [Application features](#application-features)
+- [Architecture](#architecture)
+- [Repository structure](#repository-structure)
+- [Installation and deployment](#installation-and-deployment)
+- [Routes and static configuration](#routes-and-static-configuration)
+- [Local records and backups](#local-records-and-backups)
+- [Development and testing](#development-and-testing)
+- [Privacy and safety](#privacy-and-safety)
+- [Release checkpoints and roadmap](#release-checkpoints-and-roadmap)
+- [Contributing and licensing](#contributing-and-licensing)
+
+## Application features
+
+| Module | Purpose | Entry point |
+| --- | --- | --- |
+| Command dashboard | Cross-log totals, recent activity, 14-day chart and descriptive craving/trigger summaries | [Home](https://efuhair.com/) |
+| Field Log 001 | Cigarettes, cravings, triggers, personal milestones, retrospective composition observations and baseline/profile | [Cessation](https://efuhair.com/public/space-security/tracker/index.html) |
+| Field Log 002 | Retrospective breath duration, date, context and notes | [Breath](https://efuhair.com/public/space-security/breath-log/index.html) |
+| Field Log 003 | Dairy type, milk volume, calcium intake/source, digestive symptoms and context | [Milk](https://efuhair.com/public/space-security/milk-log/index.html) |
+| Field Chronicle | Date-grouped chronological records, annual SVG chart, search, date/category filters and incremental browsing | [Timeline](https://efuhair.com/#timeline) |
+| Private journal | Create, edit, delete, search and filter reflections associated with individual trackers or all trackers | [Journal](https://efuhair.com/#journal-title) |
+| Data management | Complete JSON backup, validated merge or replacement, and cancellation | [Backups](https://efuhair.com/#data-management) |
+
+All three trackers support record creation, correction, deletion and individual JSON portability. A common sticky navigation header provides a single Trackers dropdown, active-page identification, links to the dashboard, timeline and journal, and shared dark/light themes. The interface is responsive and uses local SVG graphics without a charting library.
+
+The optional read-only demonstration at `/?demo=1` provides 72 fictional records (18 per tracker/journal). Its charts use a separate in-memory dataset. Journal edits and backup controls are disabled there. Theme preferences remain shared; opening a tracker exits the sample dashboard and opens the normal personal page.
+
+## Architecture
+
+Space Security Team is a traditional multi-page application (MPA), intentionally designed to feel like one coherent application without an SPA framework, client-side router, or front-end build pipeline.
+
+```mermaid
+flowchart TD
+    Browser["Browser"]
+    Server["MUMPS.IO / YottaDB"]
+    Routes["SPACETEAM / MIOROUTE"]
+    Template["MIOTPL layout + home page"]
+    Static["MIOSTATIC / public assets"]
+    Pages["Three standalone tracker pages"]
+    Shared["Shared navigation, design and data validation"]
+    Store["Browser localStorage"]
+    Browser --> Server --> Routes
+    Routes --> Template
+    Routes --> Static --> Pages
+    Template --> Shared
+    Pages --> Shared
+    Shared --> Store
 ```
 
-**Preserve this exact configuration for future changes.** The `/public/*path` route strips the `/public` URL prefix and resolves the remaining path under the `public/` filesystem directory. For example, `/public/space-security/space-security.css` maps to `public/space-security/space-security.css`.
+The server renders the root page and serves static files. Personal records are processed in the browser; no personal-record API, account database or cloud sync is implemented. The dashboard calculations are read-only, while the tracker and journal controllers handle edits. Node.js and Playwright are development tools only.
 
-Do not change the mount to `/public/space-security` while keeping the root as `public`; do not add a competing `/public/space-security/*path` route.
+## Repository structure
 
-## Routes
+```text
+SPACE-SECURITY-TEAM/
+├── .github/workflows/browser-tests.yml
+├── .gitignore
+├── README.md
+├── routines/
+│   └── SPACETEAM.m
+├── templates/
+│   ├── layouts/space_security_layout.html
+│   └── pages/space_security_home.html
+├── public/space-security/
+│   ├── space-security.css
+│   ├── shared-navigation.css
+│   ├── shared-navigation.js
+│   ├── design-system.css
+│   ├── local-data.js
+│   ├── dashboard.js
+│   ├── journal.js
+│   ├── demo.js
+│   ├── tracker/index.html
+│   ├── breath-log/index.html
+│   └── milk-log/index.html
+├── scripts/sync-to-mumpsio.sh
+├── playwright.config.cjs
+├── tests/
+│   ├── local-data.test.js
+│   ├── browser-server.cjs
+│   └── browser/application.spec.cjs
+└── docs/
+    ├── SPACE_SECURITY_LANDING_PAGE.md
+    ├── FIELD_LOG_001.md
+    ├── BREATH_FIELD_LOG_CONCEPT.md
+    ├── STABILIZATION_CHECKPOINT.md
+    ├── RELEASE_CANDIDATE_0_1_0.md
+    └── efuhair.gif
+```
 
-- `GET /` — landing page.
-- `GET /space-security` — legacy alias.
-- `GET /public/*path` and `HEAD /public/*path` — static assets.
+The shared data module defines validation, backup compatibility, optimistic stale-write checks and best-effort restore rollback. The shared navigation and design assets establish the common UI convention for future trackers.
 
-Both field logs and the landing stylesheet are served through the same public static route.
+## Installation and deployment
 
-## Integrate into MUMPS.IO
+### Prerequisites
 
-From this repository, run:
+- Linux/Ubuntu with Bash and Git.
+- A working MUMPS.IO checkout and configured YottaDB or GT.M environment for production.
+- Node.js 22 and npm **only** for local development tests.
+
+### Obtain the repositories
+
+For a fresh sibling-directory installation:
 
 ```bash
-chmod +x scripts/sync-to-mumpsio.sh
-./scripts/sync-to-mumpsio.sh ../mumps.io
+git clone https://github.com/aa-87/mumps.io.git
+git clone https://github.com/aa-87/SPACE-SECURITY-TEAM.git
+cd SPACE-SECURITY-TEAM
 ```
 
-Pass the absolute path to your MUMPS.IO checkout if it is not a sibling directory. The script copies the routine, templates, public assets, and project documentation into their corresponding locations without overwriting MUMPS.IO's top-level README.
+Set up the MUMPS.IO environment according to its own documentation first. If both repositories already exist, do not clone them again.
 
-Register the module in the application's existing startup sequence, before route compilation:
+### Synchronize application files
+
+```bash
+git pull --ff-only origin main
+bash scripts/sync-to-mumpsio.sh ../mumps.io
+```
+
+The script accepts an absolute target path as well. It copies the application routine, templates, entire `public/space-security/` tree and selected integration documents. It does not replace the target repository's top-level README. It overwrites the matching application files, so preserve local changes before synchronization. Keep personal backups outside the public directory.
+
+### Register routes
+
+Add the module to the existing MUMPS.IO startup sequence:
 
 ```mumps
 D INIT^MIOROUTE
@@ -57,70 +148,97 @@ D REG^SPACETEAM(.CONF)
 D COMPILE^MIOROUTE
 ```
 
-If route initialization and MIOTPL startup already occur elsewhere, add only `D REG^SPACETEAM(.CONF)` before the existing route compilation. Avoid registering the module twice.
+If initialization and MIOTPL startup already occur elsewhere, register only `REG^SPACETEAM` before the existing route compilation. Do not initialize twice or register duplicate routes. Ensure any existing root/static route conflicts are resolved in the host application. Refresh the MIOTPL template cache or restart the server using the host's normal procedure.
 
-## Field logs
+## Routes and static configuration
 
-### Field Log 001 — smoking cessation
+| Method | Path | Handler |
+| --- | --- | --- |
+| GET | `/` | `HOME^SPACETEAM` |
+| GET | `/space-security` | Legacy alias for the home page |
+| GET / HEAD | `/public/*path` | `STATIC^SPACETEAM` |
+| GET | `/?demo=1` | Same home route; browser-side demo selection |
 
-A standalone local-first log for cigarette use, cravings, triggers, notes, and personal observations. It supports JSON export/import and deletion. User-entered tobacco/cannabis composition is recorded as personal observation, not recommended use or an evidence-based cessation treatment.
+**Preserve the confirmed working MIOSTATIC configuration:**
 
-### Field Log 002 — breath observation
+```mumps
+SET CONF("server","static","mount")="/public"
+SET CONF("server","static","root")="public"
+DO STATIC^MIOSTATIC(.DEV,.CONF,.REQ,.CTX)
+```
 
-A standalone local-only log for durations entered retrospectively, date/time, optional context, and notes. It supports history, JSON export/import, and deletion. It deliberately has no live hold timer, countdown, targets, coaching, streaks, or performance scoring. Its safety notice explains fainting and drowning risks and advises against practicing in or near water, while driving or standing, alone, or after hyperventilation.
+The request path `/public/space-security/space-security.css` resolves to the file `public/space-security/space-security.css` relative to the host's static root convention. Do not substitute `/public/space-security` as the mount while retaining `public` as the root, or add a competing static route.
 
-The founder's experience during leg-injury recovery is presented as personal history, not evidence that breath-holding improves cardiovascular fitness or replaces exercise.
+If CSS or trackers return 404, check that the sync script copied the assets, the server is using the expected working directory, and the mount/root pair matches the above. If an older home page appears, check the template cache and hard-refresh the browser.
 
-## Privacy and limitations
+## Local records and backups
 
-Both field logs store data in the current browser profile using `localStorage`; they do not upload entries, require accounts, or use cloud synchronization. This app does not encrypt browser-local data. Anyone with access to the browser profile may be able to view it, and clearing browser storage may erase it. Users should export backups when needed.
+| Storage key | Contents |
+| --- | --- |
+| `sst.fieldlog.v1` | Cessation entries, profile and legacy theme |
+| `sst.breathlog.v1` | Breath observation array |
+| `sst.milklog.v1` | Milk/dairy observation array |
+| `sst.journal.v1` | Reflection array |
+| `sst.landing.theme` | Shared light/dark preference |
 
-These are personal tracking tools, not medical advice, diagnostic devices, or clinical services. The project does not claim HIPAA compliance.
+The existing versioned complete backup format is `sst-complete-backup-v1`. It contains all three tracker datasets, the journal, and the theme preference. Restore validates the document before writing, rejects duplicate IDs, and supports merge, replacement or cancellation. Merge deduplicates by ID, with incoming records taking precedence. Older backups without a milk dataset preserve the existing milk records. The import limit is 5 MB.
 
-## Unified command dashboard
+The data contract rejects stale writes when the loaded storage value differs from the current value. This is an optimistic guard, not a cross-tab lock or atomic transaction. Multi-key restore attempts rollback on failure, but rollback can itself fail. Export a current backup before restoring and close other application tabs.
 
-The root page (`/`) reads both field logs from the same browser origin and displays combined counts, cessation summaries, the latest breath-observation duration, and a filterable recent-activity feed. It reads these existing local-storage keys:
+Journal scopes include general, cessation, breath, milk and all trackers. The legacy `both` scope remains cessation plus breath.
 
-- `sst.fieldlog.v1` — cessation tracker state, including `entries`.
-- `sst.breathlog.v1` — breath-observation entry array.
+## Development and testing
 
-The dashboard is a read-only view: it does not rewrite, merge, transmit, or migrate either log's data. Each tracker remains independently usable at its existing URL. Updates made in another tab are reflected through the browser `storage` event; returning to or refreshing the dashboard reloads its summaries.
+### Data regression suite
 
-The dashboard and both trackers share the `sst.landing.theme` preference for light/dark mode. Existing tracker data formats and storage keys remain unchanged. Because browser local storage is scoped to the exact origin, records created on a different domain, subdomain, protocol, or browser profile will not automatically appear here. Export/import remains the way to move backups between environments.
+```bash
+node tests/local-data.test.js
+```
 
+The suite covers validation, duplicate IDs, merge/replacement, legacy backups, stale-write rejection and simulated rollback. It has no third-party test dependency.
 
-## Personal insights
+### Browser suite
 
-The unified dashboard also provides descriptive, local-only insights:
+```bash
+npm install --no-save --no-package-lock @playwright/test@1.51.1
+npx playwright install --with-deps chromium
+npx playwright test
+```
 
-- A rolling 14-day stacked activity chart showing how many cessation and breath-log records were entered on each day.
-- The three most frequently entered cessation trigger labels over the previous 30 days. Labels are grouped without regard to capitalization.
-- The average of recorded craving ratings from the previous 14 days.
+For a front-end-only development preview, run `node tests/browser-server.cjs` and open `http://127.0.0.1:4173/`. Stop that process before running the automated suite, which starts its own fixture server.
 
-These summaries are generated in the browser from existing local records. They do not infer causation, treatment effectiveness, health status, or breath-hold performance. Empty periods are shown as empty rather than interpreted as a lack of progress. No data is uploaded.
+The fixture combines the actual MIOTPL layout and page using simple placeholder substitution and serves the public assets. This tests the browser interface, not the YottaDB/MIOTPL runtime. Chromium desktop and mobile emulation cover navigation, theme persistence, tracker editing, journal and timeline, sample-mode isolation and backup workflows. Mobile emulation is not a substitute for testing Safari or a physical iPhone.
 
+GitHub Actions runs the data and browser suites on pushes, pull requests and manual dispatch. The workflow uses Node.js 24-compatible action runtimes while installing Node.js 22 for test commands. Failed browser-test artifacts are uploaded for diagnosis. Use synthetic records only in tests, traces and screenshots.
 
-## Private journal and complete backup
+Review [CI results](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions) and the [browser acceptance checklist](docs/STABILIZATION_CHECKPOINT.md) before promoting a release. Test the actual deployed MUMPS application separately.
 
-The root dashboard includes a local-only reflection journal stored under `sst.journal.v1`. Notes can be tagged as general, cessation-related, breath-log-related, or connected to both logs. They can be searched, filtered, edited, and deleted. Journal records also appear in the combined recent-activity feed.
+## Privacy and safety
 
-The dashboard's complete backup is a versioned JSON document (`sst-complete-backup-v1`) containing:
+- Records are browser-local and scoped to the exact origin and browser profile. Different hostnames, protocols, devices or profiles do not share records automatically.
+- Local storage and JSON exports are **not encrypted** by this application. Browser clearing, eviction or profile loss can erase data. Keep backups privately, outside the web root and repository.
+- The project does not require accounts or upload tracker records. Normal HTTP access may still appear in server logs. Full offline reload support is not implemented.
+- These are personal observation tools, not diagnostic devices, medical advice, or evidence of treatment effectiveness. No HIPAA compliance claim is made.
+- The cessation log records personal experiences with tobacco/cannabis; it does not recommend smoking or mixing them as a treatment.
+- Breath records are retrospective, without timers, targets, rankings or coaching. Breath-holding can cause fainting or drowning; do not practice in water, while driving, alone, after hyperventilation, or where fainting could cause injury.
+- The milk tracker documents the founder's unverified calcium/tolerance hypothesis. Calcium is not an established treatment for lactose intolerance and does not replace lactase. Do not increase supplement doses or provoke symptoms to test the hypothesis.
 
-- The complete cessation field-log object, including its profile/baseline.
-- Breath observation records.
-- Journal reflections.
-- The light/dark theme preference.
+## Release checkpoints and roadmap
 
-Restore validates the complete document before writing. The user chooses replacement or merge: replacement overwrites these four local-storage keys; merge deduplicates by record ID and gives imported records precedence on matching IDs. A failed storage write triggers a best-effort rollback. The import control limits files to 5 MB.
+| Checkpoint | Purpose |
+| --- | --- |
+| [Pre-stabilization](https://github.com/aa-87/SPACE-SECURITY-TEAM/tree/checkpoint/pre-stabilization-2026-11-25) | Recovery before data-integrity changes |
+| [Stabilization](https://github.com/aa-87/SPACE-SECURITY-TEAM/tree/checkpoint/stabilization-2026-11-25) | Shared validation and tracker editing |
+| [v0.1.0-rc1](https://github.com/aa-87/SPACE-SECURITY-TEAM/tree/checkpoint/v0.1.0-rc1) | Dashboard-first UX, demo and automated browser suite |
 
-Backups are ordinary, unencrypted JSON files. Browser local storage is also not encrypted by this application. Treat both as sensitive personal information and store backup files privately. No account, server upload, or cloud synchronization is involved.
+Current priority: repository hygiene, passing CI, live desktop/mobile acceptance, and a verified v0.1.0 release. Future work includes private beta feedback, stronger offline reload support, encrypted backup options, and descriptive historical comparisons. These are planned, not current features.
 
+See [release candidate notes](docs/RELEASE_CANDIDATE_0_1_0.md) and [stabilization/rollback instructions](docs/STABILIZATION_CHECKPOINT.md).
 
-## Personal progress timeline
+## Contributing and licensing
 
-The root dashboard includes a visual Field Chronicle that combines the existing cessation, breath-observation, and private journal records into a chronological view. It adds a 12-month stacked SVG activity chart, descriptive record/day/reflection totals, date-grouped event cards, time-window and field filters, text search, and incremental loading.
+Keep the root URL, shared Trackers dropdown, dark/light theme, local data contracts and MUMPS.IO static configuration intact. Prefer framework-free browser code, reuse shared assets, and update tests and documentation whenever changing persistence or record schemas. Do not commit real personal records, exported backups, credentials or generated test artifacts.
 
-The timeline reads (but does not modify) the existing `sst.fieldlog.v1`, `sst.breathlog.v1`, and `sst.journal.v1` local-storage records. Counts describe recorded activity only; they are not health outcomes, streaks, scores, or breath-hold performance goals. The timeline introduces no server endpoint, database, external dependency, or new storage key.
+Report reproducible issues with the browser, viewport, commit and synthetic steps to reproduce in [GitHub Issues](https://github.com/aa-87/SPACE-SECURITY-TEAM/issues). Never include personal tracker data.
 
-## Field Log 003 — Milk & dairy
-Private retrospective milk volume, calcium intake/source, digestive symptoms and notes. The founder's calcium/tolerance hypothesis is unverified; calcium is not a proven lactose intolerance treatment. No prescribed doses or food challenges. Stored in `sst.milklog.v1`, included in the timeline and unified backup. Older backups without milk data preserve existing milk records. Open `/public/space-security/milk-log/index.html`. Existing static routes and sync script suffice.
+No standalone LICENSE file was found during the repository review. Do not assume a public repository grants permission to redistribute or modify its code. Existing source notices remain unchanged; licensing terms should be established by the repository owner before a wider release.
