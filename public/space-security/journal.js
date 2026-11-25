@@ -2,7 +2,7 @@
 'use strict';
 var K={c:'sst.fieldlog.v1',b:'sst.breathlog.v1',j:'sst.journal.v1',t:'sst.landing.theme'},$=function(x){return document.getElementById(x)},notes=[];
 function now(){var d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
-function id(){return crypto.randomUUID?crypto.randomUUID():'j'+Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function id(){return window.crypto&&window.crypto.randomUUID?window.crypto.randomUUID():'j'+Date.now().toString(36)+Math.random().toString(36).slice(2)}
 function validDate(x){return typeof x==='string'&&!isNaN(new Date(x).getTime())}
 function validNote(x){return x&&typeof x.id==='string'&&validDate(x.date)&&['general','cessation','breath','both'].includes(x.scope)&&typeof x.title==='string'&&x.title.length<=90&&typeof x.body==='string'&&x.body.trim()&&x.body.length<=4000}
 function read(k,f){try{var v=JSON.parse(localStorage.getItem(k)||'null');return v===null?f:v}catch(e){return f}}
@@ -27,7 +27,7 @@ function parseBackup(x){if(!x||x.format!=='sst-complete-backup-v1'||x.version!==
  if(!Array.isArray(b)||!b.every(function(e){return e&&typeof e.id==='string'&&validDate(e.date)&&Number.isFinite(e.seconds)&&e.seconds>=0&&e.seconds<60000&&typeof e.context==='string'&&typeof e.notes==='string'}))throw Error('Breath log is missing or invalid.');
  if(!Array.isArray(j)||!j.every(validNote))throw Error('Journal data is missing or invalid.');if(t!=='dark'&&t!=='light')throw Error('Theme preference is invalid.');return {c:c,b:b,j:j,t:t};
 }
-function merge(a,b){var m={};a.concat(b).forEach(function(x){m[x.id]=x});return Object.keys(m).map(function(k){return m[k]})}
+function merge(a,b){var m=new Map();a.concat(b).forEach(function(x){m.set(x.id,x)});return Array.from(m.values())}
 function restore(d,replace){
  var old={};Object.keys(K).forEach(function(k){old[K[k]]=localStorage.getItem(K[k])});
  var c=read(K.c,{entries:[],profile:{baseline:'',startDate:'',goal:'Understand my patterns'},theme:'dark'}),b=read(K.b,[]),j=read(K.j,[]);
