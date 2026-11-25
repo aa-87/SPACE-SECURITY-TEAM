@@ -1,0 +1,42 @@
+(function(){
+'use strict';
+var K={c:'sst.fieldlog.v1',b:'sst.breathlog.v1',j:'sst.journal.v1',t:'sst.landing.theme'},$=function(x){return document.getElementById(x)},notes=[];
+function now(){var d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
+function id(){return crypto.randomUUID?crypto.randomUUID():'j'+Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function validDate(x){return typeof x==='string'&&!isNaN(new Date(x).getTime())}
+function validNote(x){return x&&typeof x.id==='string'&&validDate(x.date)&&['general','cessation','breath','both'].includes(x.scope)&&typeof x.title==='string'&&x.title.length<=90&&typeof x.body==='string'&&x.body.trim()&&x.body.length<=4000}
+function read(k,f){try{var v=JSON.parse(localStorage.getItem(k)||'null');return v===null?f:v}catch(e){return f}}
+function say(s){$('backupStatus').textContent=s}
+function reset(){ $('journalId').value='';$('journalFormHeading').textContent='NEW REFLECTION';$('journalSave').textContent='SAVE REFLECTION';$('journalCancel').classList.add('hidden');$('journalDate').value=now();$('journalScope').value='general';$('journalTitle').value='';$('journalBody').value=''}
+function render(){
+ var q=$('journalSearch').value.trim().toLowerCase(),f=$('journalFilter').value;
+ var arr=notes.filter(function(n){return(f==='all'||n.scope===f)&&(!q||(n.title+' '+n.body).toLowerCase().includes(q))}).sort(function(a,b){return new Date(b.date)-new Date(a.date)});
+ $('journalCount').textContent=notes.length+' NOTE'+(notes.length===1?'':'S');var host=$('journalList');host.textContent='';
+ if(!arr.length){var p=document.createElement('p');p.className='journal-empty';p.textContent=notes.length?'No reflections match this filter.':'Your reflections will appear here. Start with one thing you noticed.';host.appendChild(p);return}
+ arr.forEach(function(n){var a=document.createElement('article');a.className='journal-entry';var top=document.createElement('div');top.className='journal-entry-top';var date=document.createElement('span');date.textContent=new Date(n.date).toLocaleString();var scope=document.createElement('span');scope.className='journal-scope';scope.textContent=n.scope.toUpperCase();top.appendChild(date);top.appendChild(scope);a.appendChild(top);
+ if(n.title){var h=document.createElement('h4');h.textContent=n.title;a.appendChild(h)}var body=document.createElement('p');body.className='journal-entry-body';body.textContent=n.body;a.appendChild(body);
+ var actions=document.createElement('div');actions.className='journal-entry-actions';var edit=document.createElement('button');edit.textContent='EDIT';edit.addEventListener('click',function(){$('journalId').value=n.id;$('journalFormHeading').textContent='EDIT REFLECTION';$('journalSave').textContent='SAVE CHANGES';$('journalCancel').classList.remove('hidden');var d=new Date(n.date);$('journalDate').value=new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16);$('journalScope').value=n.scope;$('journalTitle').value=n.title;$('journalBody').value=n.body;$('journalBody').focus()});
+ var del=document.createElement('button');del.textContent='DELETE';del.addEventListener('click',function(){if(confirm('Delete this reflection from this browser?'))saveNotes(notes.filter(function(x){return x.id!==n.id}))});actions.appendChild(edit);actions.appendChild(del);a.appendChild(actions);host.appendChild(a)});
+}
+function saveNotes(a){try{localStorage.setItem(K.j,JSON.stringify(a));notes=a;render();return true}catch(e){say('Could not save. Browser storage may be full or disabled.');return false}}
+$('journalForm').addEventListener('submit',function(e){e.preventDefault();var body=$('journalBody').value.trim();if(!body)return;var key=$('journalId').value,n={id:key||id(),date:new Date($('journalDate').value).toISOString(),scope:$('journalScope').value,title:$('journalTitle').value.trim(),body:body};if(saveNotes(notes.filter(function(x){return x.id!==n.id}).concat([n]))){reset();say('Reflection saved in this browser only.')}});
+$('journalCancel').addEventListener('click',reset);$('journalSearch').addEventListener('input',render);$('journalFilter').addEventListener('change',render);
+function validC(x){return x&&typeof x.id==='string'&&validDate(x.when)&&['cigarette','blend','craving','smokefree','other'].includes(x.type)&&typeof x.notes==='string'&&typeof x.trigger==='string'&&Number.isFinite(Number(x.craving||0))&&Number(x.craving||0)>=0&&Number(x.craving||0)<=10}
+function parseBackup(x){if(!x||x.format!=='sst-complete-backup-v1'||x.version!==1||!x.data)throw Error('Unsupported backup format.');var c=x.data.cessation,b=x.data.breath,j=x.data.journal,t=x.data.preferences&&x.data.preferences.theme;
+ if(!c||!Array.isArray(c.entries)||!c.profile||!c.entries.every(validC))throw Error('Cessation log is missing or invalid.');
+ if(!Array.isArray(b)||!b.every(function(e){return e&&typeof e.id==='string'&&validDate(e.date)&&Number.isFinite(e.seconds)&&e.seconds>=0&&e.seconds<60000&&typeof e.context==='string'&&typeof e.notes==='string'}))throw Error('Breath log is missing or invalid.');
+ if(!Array.isArray(j)||!j.every(validNote))throw Error('Journal data is missing or invalid.');if(t!=='dark'&&t!=='light')throw Error('Theme preference is invalid.');return {c:c,b:b,j:j,t:t};
+}
+function merge(a,b){var m={};a.concat(b).forEach(function(x){m[x.id]=x});return Object.keys(m).map(function(k){return m[k]})}
+function restore(d,replace){
+ var old={};Object.keys(K).forEach(function(k){old[K[k]]=localStorage.getItem(K[k])});
+ var c=read(K.c,{entries:[],profile:{baseline:'',startDate:'',goal:'Understand my patterns'},theme:'dark'}),b=read(K.b,[]),j=read(K.j,[]);
+ var next={};next[K.c]=JSON.stringify(replace?d.c:{entries:merge(c.entries,d.c.entries),profile:c.profile,theme:c.theme||d.t});next[K.b]=JSON.stringify(replace?d.b:merge(b,d.b));next[K.j]=JSON.stringify(replace?d.j:merge(j,d.j));next[K.t]=d.t;
+ try{Object.keys(next).forEach(function(k){localStorage.setItem(k,next[k])})}catch(e){Object.keys(old).forEach(function(k){try{if(old[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,old[k])}catch(ignore){}});throw Error('Storage write failed; rollback was attempted.')}
+ notes=replace?d.j:merge(j,d.j);render();$('dashboardRefresh').click();say('Restore complete: '+(replace?'replaced':'merged')+' all field logs and reflections.');
+}
+function download(name,obj){var u=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1200)}
+$('backupExport').addEventListener('click',function(){try{var c=read(K.c,{entries:[],profile:{baseline:'',startDate:'',goal:'Understand my patterns'},theme:'dark'}),b=read(K.b,[]);if(!Array.isArray(c.entries)||!c.profile||!Array.isArray(b)||!c.entries.every(validC)||!b.every(function(e){return e&&typeof e.id==='string'&&validDate(e.date)&&Number.isFinite(e.seconds)&&typeof e.context==='string'&&typeof e.notes==='string'}))throw Error('One of the field logs is malformed.');download('space-security-complete-backup-'+new Date().toISOString().slice(0,10)+'.json',{format:'sst-complete-backup-v1',version:1,exportedAt:new Date().toISOString(),data:{cessation:c,breath:b,journal:notes,preferences:{theme:document.documentElement.dataset.theme||'dark'}}});say('Complete backup created. It contains sensitive personal records; store it privately.')}catch(e){say('Export stopped: '+e.message)}});
+$('backupImport').addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(!f)return;if(f.size>5242880){say('Backup exceeds the 5 MB safety limit.');e.target.value='';return}var r=new FileReader();r.onload=function(){try{var d=parseBackup(JSON.parse(r.result)),replace=confirm('OK = REPLACE all existing local records. Cancel = MERGE records; imported matching IDs take precedence. Export a current backup first if needed.');restore(d,replace)}catch(err){say('Restore stopped: '+err.message)}finally{e.target.value=''}};r.onerror=function(){say('Could not read the selected file.');e.target.value=''};r.readAsText(f)});
+notes=read(K.j,[]).filter(validNote);reset();render();
+})();
