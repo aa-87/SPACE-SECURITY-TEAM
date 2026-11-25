@@ -4,16 +4,10 @@
     <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
     <span class="brand-name">SPACE SECURITY<span>TEAM / EARTH DIVISION</span></span>
   </a>
-  <nav class="topnav" aria-label="Main navigation">
-    <a href="#dashboard">DASHBOARD</a>
-    <a href="#timeline">TIMELINE</a>
-    <a href="#journal-title">JOURNAL</a>
-    <a href="#protocol">THE PROTOCOL</a>
-    <a href="#training">TRAINING</a>
-    <a href="/public/space-security/tracker/index.html">CESSATION LOG <b aria-hidden="true">↗</b></a>
-    <a href="/public/space-security/breath-log/index.html">BREATH LOG <b aria-hidden="true">↗</b></a>
-    <a class="nav-cta" href="#brief">READ THE BRIEF <b aria-hidden="true">↘</b></a>
-  </nav>
+  <nav class="topnav" aria-label="Main navigation"><a href="#dashboard">Dashboard</a><a href="#timeline">Timeline</a><a href="#journal-title">Journal</a><details class="tracker-menu" id="trackerMenu"><summary id="trackerMenuToggle">Trackers <span class="tracker-menu-count">03</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 6 5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></summary><div class="tracker-menu-panel"><div class="tracker-menu-heading"><span>FIELD LOGS</span><span>PRIVATE / LOCAL</span></div>
+<a href="/public/space-security/tracker/index.html"><span class="tracker-menu-icon cessation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h18v5H3zM17 13v5M7 9l2-5m4 5 2-5"/></svg></span><span class="tracker-menu-copy"><strong>Smoking cessation</strong><small>Cigarettes, cravings &amp; milestones</small><span class="tracker-menu-entry-count" id="dashCessationEntries">0 ENTRIES</span></span><span class="tracker-menu-arrow" aria-hidden="true">↗</span></a>
+<a href="/public/space-security/breath-log/index.html"><span class="tracker-menu-icon breath"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h5l3-6 4 12 3-6h5"/></svg></span><span class="tracker-menu-copy"><strong>Breath observation</strong><small>Retrospective duration &amp; context</small><span class="tracker-menu-entry-count" id="dashBreathEntries">0 ENTRIES</span></span><span class="tracker-menu-arrow" aria-hidden="true">↗</span></a>
+<a href="/public/space-security/milk-log/index.html"><span class="tracker-menu-icon milk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8 8 5 11 5 15a7 7 0 0 0 14 0c0-4-3-7-7-13Z"/></svg></span><span class="tracker-menu-copy"><strong>Milk consumption</strong><small>Dairy, calcium &amp; digestive observations</small><span class="tracker-menu-entry-count" id="dashMilkEntries">0 ENTRIES</span></span><span class="tracker-menu-arrow" aria-hidden="true">↗</span></a><div class="tracker-menu-footer">Three trackers. One private dashboard.</div></div></details></nav>
   <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch to light theme" title="Switch theme">◐ THEME</button>
 </header>
 
@@ -24,10 +18,10 @@
       <h1>The mission<br>begins <em>within.</em></h1>
       <p class="hero-lede">A self-directed training ground for people who want to understand themselves, break old patterns, and build a stronger human instrument.</p>
       <div class="hero-actions">
-        <a class="button button-red" href="#protocol">ENTER THE PROTOCOL <span aria-hidden="true">↘</span></a>
+        <a class="button button-red tracker-launch" href="#trackerMenu">OPEN TRACKERS <span aria-hidden="true">↗</span></a>
         <a class="quiet-link" href="https://github.com/aa-87/mumps.io" target="_blank" rel="noopener">BUILT ON OPEN SOURCE <span aria-hidden="true">↗</span></a>
       </div>
-      <div class="hero-note"><span class="note-symbol">✳</span><span>Not a boot camp. Not a miracle cure.<br>A logbook for honest experiments and steady progress.</span></div>
+      <p class="hero-lede" style="margin-top:12px">Smoking cessation · Breath observation · Milk consumption</p><div class="hero-note"><span class="note-symbol">✳</span><span>Not a boot camp. Not a miracle cure.<br>A logbook for honest experiments and steady progress.</span></div>
     </div>
     <div class="hero-visual" role="img" aria-label="Abstract orbital chart showing a red central star and orbiting points">
       <div class="visual-top"><span>SECTOR 001 / SOL</span><span>40° 43′ N — 74° 00′ W</span></div>
@@ -46,7 +40,7 @@
   <section class="dashboard shell" id="dashboard" aria-labelledby="dashboard-title">
     <div class="section-head"><p class="eyebrow">00 / FIELD COMMAND</p><span class="micro">LIVE LOCAL DATA / THIS BROWSER</span></div>
     <div class="dashboard-heading">
-      <div><p class="dashboard-kicker">PERSONAL OPERATIONS / OVERVIEW</p><h2 id="dashboard-title">Your field<br><em>dashboard.</em></h2><p class="dashboard-intro">Three private logs. One private journal. One view of your observations. Your records and reflections stay in this browser profile and are never sent to a server.</p></div>
+      <div><p class="dashboard-kicker">PERSONAL OPERATIONS / OVERVIEW</p><h2 id="dashboard-title">Your field<br><em>dashboard.</em></h2><p class="dashboard-intro">Three private logs. One private journal. One view of your observations. Your records and reflections stay in this browser profile and are never sent to a server.</p><a class="tracker-launch" href="#trackerMenu">Choose a tracker ↗</a></div>
       <div class="dashboard-status"><span class="status-light"></span><span><b id="dashboardStatus">LOCAL STORAGE READY</b><small id="dashboardUpdated">Waiting for local records</small></span><button type="button" id="dashboardRefresh" aria-label="Refresh dashboard" title="Refresh dashboard">↻</button></div>
     </div>
     <div class="dashboard-stats" aria-live="polite">
@@ -103,23 +97,6 @@
       <div id="personalTimeline" class="personal-timeline" aria-live="polite"><p class="timeline-empty">Your timeline will take shape as you record observations and reflections.</p></div>
       <div class="timeline-more-wrap"><button type="button" class="button button-outline" id="timelineMore" hidden>SHOW OLDER RECORDS <span aria-hidden="true">↓</span></button><span id="timelineMoreNote">Your records remain in this browser.</span></div>
     </section>
-    <div class="dashboard-tools">
-      <article class="dashboard-tool cessation-tool">
-        <div class="dashboard-tool-top"><span class="tool-index">FIELD LOG / 001</span><span class="tool-state"><i></i> ACTIVE</span></div>
-        <div class="tool-symbol tool-symbol-cig" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 35h48v9H8zM46 35v9M14 29l6-13m8 13 6-13" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 48h48" stroke="currentColor" opacity=".25"/></svg></div>
-        <h3>Smoking cessation</h3><p>Record cigarettes, cravings, triggers, and the context around each choice. Review your own patterns without judgment.</p>
-        <div class="tool-meta"><span id="dashCessationEntries">0 ENTRIES</span><span>LOCAL / PRIVATE</span></div>
-        <a href="/public/space-security/tracker/index.html" class="button button-red">OPEN CESSATION LOG <span aria-hidden="true">↗</span></a>
-      </article>
-      <article class="dashboard-tool breath-tool">
-        <div class="dashboard-tool-top"><span class="tool-index">FIELD LOG / 002</span><span class="tool-state"><i></i> ACTIVE</span></div>
-        <div class="tool-symbol tool-symbol-breath" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M7 32h12c4 0 5-14 10-14s7 28 13 28 7-14 11-14h4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" opacity=".22"/><path d="M10 51h44" stroke="currentColor" opacity=".25"/></svg></div>
-        <h3>Breath observation</h3><p>Keep retrospective duration records with date, context, and notes. This is a logbook, not a training or performance tool.</p>
-        <div class="tool-meta"><span id="dashBreathEntries">0 ENTRIES</span><span>LOCAL / PRIVATE</span></div>
-        <a href="/public/space-security/breath-log/index.html" class="button button-outline">OPEN BREATH LOG <span aria-hidden="true">↗</span></a>
-      </article>
-    </div>
-    <article class="dashboard-tool milk-tool"><div class="dashboard-tool-top"><span class="tool-index">FIELD LOG / 003</span><span class="tool-state">LOCAL / PRIVATE</span></div><div class="tool-symbol" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M32 5C20 22 12 32 12 42a20 20 0 0 0 40 0C52 32 44 22 32 5Z" fill="none" stroke="currentColor" stroke-width="2"/></svg></div><h3>Milk &amp; dairy observation</h3><p>Record milk, calcium intake and digestive symptoms. Inspired by a personal hypothesis, not a proven treatment for lactose intolerance.</p><div class="tool-meta"><span id="dashMilkEntries">0 ENTRIES</span></div><a class="button button-outline" href="/public/space-security/milk-log/index.html">OPEN MILK LOG ↗</a></article>
     <section class="activity-panel" aria-labelledby="activity-title">
       <div class="activity-head"><div><p class="dashboard-kicker">CROSS-LOG VIEW</p><h3 id="activity-title">Recent activity</h3></div><div class="activity-controls" role="group" aria-label="Filter activity"><button type="button" class="activity-filter is-active" data-filter="all" aria-pressed="true">ALL</button><button type="button" class="activity-filter" data-filter="cessation" aria-pressed="false">CESSATION</button><button type="button" class="activity-filter" data-filter="breath" aria-pressed="false">BREATH</button><button type="button" class="activity-filter" data-filter="milk" aria-pressed="false">MILK</button><button type="button" class="activity-filter" data-filter="journal" aria-pressed="false">JOURNAL</button></div></div>
       <div id="combinedActivity" class="combined-activity" aria-live="polite"><p class="activity-empty">Your observations will appear here when you add them to either field log.</p></div>
@@ -174,8 +151,7 @@
           <div class="chart-legend"><span><i></i> NOTICE / RECORD / REVIEW</span><span>YOUR DATA</span></div>
         </div>
         <div class="tracker-footer"><span>NO ACCOUNT</span><span>NO CLOUD SYNC</span><span>YOUR CONTROL</span></div>
-        <a class="button button-red" href="/public/space-security/tracker/index.html" style="margin-top:18px">OPEN CESSATION LOG <span aria-hidden="true">↗</span></a>
-      </div>
+        
       </div>
     </div>
     <div class="principles">
@@ -183,7 +159,7 @@
       <article><span class="principle-no">A / 02</span><h3>Record</h3><p>Track smoke-free time, cravings, cigarettes avoided, and what you tried instead.</p></article>
       <article><span class="principle-no">A / 03</span><h3>Review</h3><p>Turn entries into visual patterns. Learn from difficult days as well as good ones.</p></article>
     </div>
-    <p class="demo-disclaimer">The live dashboard reads records already saved by the two field logs in this browser. Nothing is uploaded or synchronized to a server.</p>
+    <p class="demo-disclaimer">The live dashboard reads records already saved by the field logs in this browser. Nothing is uploaded or synchronized to a server.</p>
   </section>
 
   <section class="dark-band" id="training">
@@ -228,7 +204,7 @@
         <div>
           <p class="section-lede">A standalone observation log for recording individual breath-hold durations, dates, and optional context. Durations are entered after the fact; this is not a live hold timer, training plan, or fitness test.</p>
           <p class="body-copy">The founder reports finding breath-hold practice personally useful during recovery from a leg injury, when typical cardio activity was difficult. That experience is preserved as personal history, not proof of improved cardiovascular fitness or a substitute for exercise.</p>
-          <a class="button button-red" href="/public/space-security/breath-log/index.html">OPEN BREATH OBSERVATION LOG <span>↗</span></a>
+          
           <p class="demo-disclaimer">Local browser storage · JSON export/import · No accounts or cloud sync</p>
         </div>
         <div class="tracker-card"><div class="tracker-head"><span>FIELD LOG / 002</span><span>LOCAL RECORD</span></div><div class="tracker-main"><div><span class="metric-label">OBSERVATION HISTORY</span><strong>— —</strong><small>NO TARGETS / NO PERFORMANCE SCORE</small></div><div class="metric-stamp">LOG<br>02</div></div><div class="tracker-footer"><span>RECORD</span><span>REFLECT</span><span>KEEP IT PERSONAL</span></div></div>
@@ -239,7 +215,7 @@
   <section class="closing shell">
     <p class="eyebrow"><span class="status-light"></span> PRE-LAUNCH / NO ACCOUNTS YET</p>
     <h2>Start with one honest<br><em>observation.</em></h2>
-    <p>Both field tools now connect to one local dashboard. Keep the record honest, private, and grounded in your own experience.</p>
+    <p>All three trackers now connect to one local dashboard. Keep the record honest, private, and grounded in your own experience.</p>
     <a class="button button-red" href="#dashboard">OPEN THE COMMAND DASHBOARD <span aria-hidden="true">↗</span></a>
     <a class="quiet-link" href="https://github.com/aa-87/mumps.io" target="_blank" rel="noopener">EXPLORE THE MUMPS.IO REPOSITORY <span aria-hidden="true">↗</span></a>
   </section>
@@ -251,7 +227,7 @@
 (function(){var root=document.documentElement,btn=document.getElementById('themeToggle'),key='sst.landing.theme';function set(t){root.setAttribute('data-theme',t);if(btn){btn.setAttribute('aria-label',t==='light'?'Switch to dark theme':'Switch to light theme');btn.setAttribute('aria-pressed',t==='light'?'true':'false');}var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#f3f1ed':'#08090b');}var t=null;try{t=localStorage.getItem(key);}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';set(t);if(btn)btn.addEventListener('click',function(){var n=root.getAttribute('data-theme')==='light'?'dark':'light';set(n);try{localStorage.setItem(key,n);}catch(e){}});})();
 </script>
 <script>
-
+(function(){var menu=document.getElementById('trackerMenu'),toggle=document.getElementById('trackerMenuToggle');if(!menu||!toggle)return;document.querySelectorAll('.tracker-launch').forEach(function(link){link.addEventListener('click',function(e){e.preventDefault();menu.open=true;toggle.scrollIntoView({block:'center',behavior:'instant'});toggle.focus({preventScroll:true})})});document.addEventListener('click',function(e){if(menu.open&&!menu.contains(e.target)&&!e.target.closest('.tracker-launch'))menu.open=false});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&menu.open){menu.open=false;toggle.focus()}});menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.open=false})})})();
 </script>
 <script src="/public/space-security/dashboard.js" defer></script>
 <script src="/public/space-security/journal.js" defer></script>
