@@ -25,7 +25,7 @@
     $('recentCravingCount').textContent=cravingValues.length?cravingValues.length+' ratings in the last 14 days':'No recent ratings';
   }
   function load(){
-    var D=window.SSTData,errors=[];function dataset(k){try{return D.read(localStorage,k).value}catch(e){errors.push(k);return D.empty(k)}}var cessation=dataset('c'),breath=dataset('b'),journal=dataset('j');
+    var D=window.SSTData,errors=[];function dataset(k){if(window.SSTDemo)return D.validate(k,window.SSTDemo.data[k]);try{return D.read(localStorage,k).value}catch(e){errors.push(k);return D.empty(k)}}var cessation=dataset('c'),breath=dataset('b'),journal=dataset('j');
     var c=cessation&&Array.isArray(cessation.entries)?cessation.entries:[],b=Array.isArray(breath)?breath:[],validJournal=(Array.isArray(journal)?journal:[]).filter(function(e){return e&&typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())&&typeof e.body==='string'});
     var milk=dataset('m');milk=(Array.isArray(milk)?milk:[]).filter(function(e){return e&&typeof e.date==='string'&&!isNaN(Date.parse(e.date))&&typeof e.kind==='string'});$('dashMilkEntries').textContent=milk.length+' ENTRIES';
     var cigarettes=c.filter(function(e){return e&&e.type==='cigarette'}).reduce(function(sum,e){return sum+(Number(e.quantity)||0)},0);
@@ -47,7 +47,7 @@
     timelineEvents=events;timelineLimit=12;renderTimeline();
     render();
     $('dashboardUpdated').textContent=events.length?'Updated just now · '+events.length+' records':'No local records yet';
-    $('dashboardStatus').textContent=errors.length?'LOCAL STORAGE / PARTIAL DATA':'LOCAL STORAGE / '+(events.length?'CONNECTED':'READY');if(errors.length)$('dashboardUpdated').textContent='Some records could not be read. Export or repair before editing.';
+    $('dashboardStatus').textContent=errors.length?'LOCAL STORAGE / PARTIAL DATA':'LOCAL STORAGE / '+(events.length?'CONNECTED':'READY');if(window.SSTDemo){$('dashboardStatus').textContent='DEMO / FICTIONAL DATA';$('dashboardUpdated').textContent='Sample records only';}if(errors.length)$('dashboardUpdated').textContent='Some records could not be read. Export or repair before editing.';
   }
   function render(){
     var events=(window.__sstDashboardEvents||[]).filter(function(e){return filter==='all'||e.group===filter}).slice(0,8),host=$('combinedActivity');
