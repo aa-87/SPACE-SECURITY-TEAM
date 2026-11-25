@@ -7,14 +7,15 @@
   function duration(seconds){var n=Number(seconds);if(!Number.isFinite(n)||n<0)return '—';return Math.floor(n/60)+'m '+(n%60).toFixed(1)+'s'}
   function dayKey(date){var d=new Date(date);if(isNaN(d.getTime()))return '';return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
   function dayLabel(date){return date.toLocaleDateString(undefined,{weekday:'short'}).slice(0,2)}
-  function renderInsights(c,validBreath){
-    var now=new Date(),days=[],map={},triggers={},cravingValues=[],calendarStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()-13).getTime();
-    for(var i=13;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),key=dayKey(d);days.push({date:d,key:key,label:dayLabel(d),cessation:0,breath:0});map[key]=days[days.length-1]}
-    c.forEach(function(e){if(!e||typeof e.when!=='string')return;var dt=new Date(e.when);if(isNaN(dt.getTime()))return;var key=dayKey(dt);if(map[key])map[key].cessation++;if(now-dt<=30*86400000&&now>=dt&&typeof e.trigger==='string'&&e.trigger.trim()){var trigger=e.trigger.trim().replace(/\s+/g,' '),triggerKey=trigger.toLocaleLowerCase();if(!triggers[triggerKey])triggers[triggerKey]={name:trigger,count:0};triggers[triggerKey].count++}if(dt.getTime()>=calendarStart&&dt<=now&&e.craving!==''&&e.craving!=null&&Number.isFinite(Number(e.craving)))cravingValues.push(Number(e.craving))});
+  function renderInsights(c,validBreath,milk){
+    var now=new Date(),days=[],map={},triggers=Object.create(null),cravingValues=[],calendarStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()-13).getTime();
+    for(var i=13;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),key=dayKey(d);days.push({date:d,key:key,label:dayLabel(d),cessation:0,breath:0,milk:0});map[key]=days[days.length-1]}
+    c.forEach(function(e){if(!e||typeof e.when!=='string')return;var dt=new Date(e.when);if(isNaN(dt.getTime()))return;var key=dayKey(dt);if(map[key]&&dt<=now)map[key].cessation++;if(now-dt<=30*86400000&&now>=dt&&typeof e.trigger==='string'&&e.trigger.trim()){var trigger=e.trigger.trim().replace(/\s+/g,' '),triggerKey=trigger.toLocaleLowerCase();if(!triggers[triggerKey])triggers[triggerKey]={name:trigger,count:0};triggers[triggerKey].count++}if(dt.getTime()>=calendarStart&&dt<=now&&e.craving!==''&&e.craving!=null&&Number.isFinite(Number(e.craving))&&Number(e.craving)>=0&&Number(e.craving)<=10)cravingValues.push(Number(e.craving))});
     validBreath.forEach(function(e){var dt=new Date(e.date),key=dayKey(dt);if(map[key])map[key].breath++});
-    var svg=$('activityChart'),max=Math.max(1,...days.map(function(d){return d.cessation+d.breath})),base=174,plotH=145,left=40,plotW=660,step=plotW/14,barW=22,out='';
+    milk.forEach(function(e){var key=dayKey(e.date);if(map[key])map[key].milk++});
+    var svg=$('activityChart'),max=Math.max(1,...days.map(function(d){return d.cessation+d.breath+d.milk})),base=174,plotH=145,left=40,plotW=660,step=plotW/14,barW=22,out='';
     [0,Math.ceil(max/2),max].filter(function(v,i,a){return a.indexOf(v)===i}).forEach(function(v){var y=base-(v/max)*plotH;out+='<line class="insight-gridline" x1="'+left+'" y1="'+y+'" x2="'+(left+plotW)+'" y2="'+y+'"/><text class="insight-axis-label" x="'+(left-10)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>'});
-    days.forEach(function(d,i){var x=left+i*step+(step-barW)/2,h1=d.cessation/max*plotH,h2=d.breath/max*plotH;out+='<rect class="bar-cessation" x="'+x+'" y="'+(base-h1)+'" width="'+barW+'" height="'+h1+'" rx="2"><title>'+d.label+': '+d.cessation+' cessation entries</title></rect>';out+='<rect class="bar-breath" x="'+x+'" y="'+(base-h1-h2)+'" width="'+barW+'" height="'+h2+'" rx="2"><title>'+d.label+': '+d.breath+' breath observations</title></rect>';if(i%2===0||i===13)out+='<text class="insight-axis-label" x="'+(x+barW/2)+'" y="197" text-anchor="middle">'+d.label+'</text>'});
+    days.forEach(function(d,i){var x=left+i*step+(step-barW)/2,h1=d.cessation/max*plotH,h2=d.breath/max*plotH,h3=d.milk/max*plotH;out+='<rect class="bar-cessation" x="'+x+'" y="'+(base-h1)+'" width="'+barW+'" height="'+h1+'" rx="2"><title>'+d.label+': '+d.cessation+' cessation entries</title></rect>';out+='<rect class="bar-breath" x="'+x+'" y="'+(base-h1-h2)+'" width="'+barW+'" height="'+h2+'" rx="2"><title>'+d.label+': '+d.breath+' breath observations</title></rect>';out+='<rect class="bar-milk" x="'+x+'" y="'+(base-h1-h2-h3)+'" width="'+barW+'" height="'+h3+'" rx="2"><title>'+d.label+': '+d.milk+' milk observations</title></rect>';if(i%2===0||i===13)out+='<text class="insight-axis-label" x="'+(x+barW/2)+'" y="197" text-anchor="middle">'+d.label+'</text>'});
     svg.innerHTML=out;
     var topTriggers=Object.keys(triggers).map(function(k){return triggers[k]}).sort(function(a,b){return b.count-a.count||a.name.localeCompare(b.name)}).slice(0,3),host=$('triggerInsights');
     host.textContent='';
@@ -24,13 +25,13 @@
     $('recentCravingCount').textContent=cravingValues.length?cravingValues.length+' ratings in the last 14 days':'No recent ratings';
   }
   function load(){
-    var cessation=read('sst.fieldlog.v1',{}),breath=read('sst.breathlog.v1',[]),journal=read('sst.journal.v1',[]);
+    var D=window.SSTData,errors=[];function dataset(k){try{return D.read(localStorage,k).value}catch(e){errors.push(k);return D.empty(k)}}var cessation=dataset('c'),breath=dataset('b'),journal=dataset('j');
     var c=cessation&&Array.isArray(cessation.entries)?cessation.entries:[],b=Array.isArray(breath)?breath:[],validJournal=(Array.isArray(journal)?journal:[]).filter(function(e){return e&&typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())&&typeof e.body==='string'});
-    var milk=read('sst.milklog.v1',[]);milk=(Array.isArray(milk)?milk:[]).filter(function(e){return e&&typeof e.date==='string'&&!isNaN(Date.parse(e.date))&&typeof e.kind==='string'});$('dashMilkEntries').textContent=milk.length+' ENTRIES';
+    var milk=dataset('m');milk=(Array.isArray(milk)?milk:[]).filter(function(e){return e&&typeof e.date==='string'&&!isNaN(Date.parse(e.date))&&typeof e.kind==='string'});$('dashMilkEntries').textContent=milk.length+' ENTRIES';
     var cigarettes=c.filter(function(e){return e&&e.type==='cigarette'}).reduce(function(sum,e){return sum+(Number(e.quantity)||0)},0);
     var cravings=c.filter(function(e){return e&&e.craving!==''&&e.craving!=null&&Number.isFinite(Number(e.craving))}).map(function(e){return Number(e.craving)});
     var average=cravings.length?(cravings.reduce(function(a,n){return a+n},0)/cravings.length).toFixed(1)+'/10':'—';
-    var validBreath=b.filter(function(e){return e&&Number.isFinite(Number(e.seconds))&&Number(e.seconds)>=0&&typeof e.date==='string'}).sort(function(a,z){return z.date.localeCompare(a.date)});
+    var validBreath=b.filter(function(e){return e&&Number.isFinite(Number(e.seconds))&&Number(e.seconds)>=0&&typeof e.date==='string'&&!isNaN(Date.parse(e.date))}).sort(function(a,z){return z.date.localeCompare(a.date)});
     $('dashCigarettes').textContent=cigarettes.toLocaleString();
     $('dashCraving').textContent=average;
     $('dashCravingCount').textContent=cravings.length?cravings.length+' rated observations':'No craving ratings yet';
@@ -40,18 +41,18 @@
     $('dashBreakdown').textContent=c.length+' cessation · '+validBreath.length+' breath · '+validJournal.length+' journal · '+milk.length+' milk';
     $('dashCessationEntries').textContent=c.length+' ENTR'+(c.length===1?'Y':'IES');
     $('dashBreathEntries').textContent=validBreath.length+' ENTR'+(validBreath.length===1?'Y':'IES');
-    renderInsights(c,validBreath);
+    renderInsights(c,validBreath,milk);
     var events=c.filter(Boolean).map(function(e){var kind=e.type==='cigarette'?'Cigarette entry':e.type==='craving'?'Craving observation':e.type==='blend'?'Tobacco / cannabis entry':e.type==='smokefree'?'Smoke-free milestone':'Cessation note';return {group:'cessation',date:e.when,title:kind,detail:[e.quantity&&e.type==='cigarette'?e.quantity+' cigarette(s)':null,e.type==='blend'&&Number.isFinite(Number(e.tobaccoPct))?'Tobacco '+e.tobaccoPct+'% / cannabis '+e.cannabisPct+'%':null,e.craving!==''&&e.craving!=null?'Craving '+e.craving+'/10':null,e.trigger||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,kind:e.type,trigger:e.trigger||''}}).concat(validBreath.map(function(e){return {group:'breath',date:e.date,title:'Breath observation',detail:[duration(e.seconds),e.context||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,seconds:Number(e.seconds),kind:'observation'}})).concat(validJournal.map(function(e){return {group:'journal',date:e.date,title:e.title||'Personal reflection',detail:e.body,id:e.id,scope:e.scope||'general'}})).concat(milk.map(function(e){return {group:'milk',date:e.date,title:e.kind,detail:[e.ml==null?null:e.ml+' mL',e.calcium==null?null:e.calcium+' mg calcium',e.source,e.symptoms,e.notes].filter(Boolean).join(' · ')}})).filter(function(e){return typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())}).sort(function(a,z){return new Date(z.date)-new Date(a.date)});
     window.__sstDashboardEvents=events;
     timelineEvents=events;timelineLimit=12;renderTimeline();
     render();
     $('dashboardUpdated').textContent=events.length?'Updated just now · '+events.length+' records':'No local records yet';
-    $('dashboardStatus').textContent='LOCAL STORAGE / '+(events.length?'CONNECTED':'READY');
+    $('dashboardStatus').textContent=errors.length?'LOCAL STORAGE / PARTIAL DATA':'LOCAL STORAGE / '+(events.length?'CONNECTED':'READY');if(errors.length)$('dashboardUpdated').textContent='Some records could not be read. Export or repair before editing.';
   }
   function render(){
     var events=(window.__sstDashboardEvents||[]).filter(function(e){return filter==='all'||e.group===filter}).slice(0,8),host=$('combinedActivity');
-    if(!events.length){host.innerHTML='<p class="activity-empty">'+(filter==='all'?'Your observations will appear here when you add them to either field log.':'No '+(filter==='breath'?'breath':filter==='journal'?'journal':filter==='milk'?'milk':'cessation')+' records yet.')+'</p>';return}
-    host.innerHTML=events.map(function(e){return '<article class="activity-item '+e.group+'"><span class="activity-mark" aria-hidden="true">'+(e.group==='milk'?'03':e.group==='breath'?'02':e.group==='journal'?'J':'01')+'</span><div class="activity-copy"><strong>'+esc(e.title)+'</strong><small>'+esc(dateLabel(e.date))+'</small>'+(e.detail?'<p>'+esc(e.detail)+'</p>':'')+'</div><span class="activity-type">'+(e.group==='milk'?'MILK':e.group==='breath'?'BREATH':e.group==='journal'?'JOURNAL':'CESSATION')+'</span></article>'}).join('');
+    if(!events.length){host.innerHTML='<p class="activity-empty">'+(filter==='all'?'Your observations will appear here when you add them to a tracker or journal.':'No '+(filter==='breath'?'breath':filter==='journal'?'journal':filter==='milk'?'milk':'cessation')+' records yet.')+'</p>';return}
+    host.innerHTML=events.map(function(e){return '<article class="activity-item '+e.group+'"><span class="activity-mark" aria-hidden="true">'+(e.group==='milk'?'03':e.group==='breath'?'02':e.group==='journal'?'J':'01')+'</span><div class="activity-copy"><strong>'+esc(e.title)+'</strong><small>'+esc(dateLabel(e.date))+'</small>'+(e.detail?'<p>'+esc(e.detail.length>180?e.detail.slice(0,177)+'…':e.detail)+'</p>':'')+'</div><span class="activity-type">'+(e.group==='milk'?'MILK':e.group==='breath'?'BREATH':e.group==='journal'?'JOURNAL':'CESSATION')+'</span></article>'}).join('');
   }
 
   function timelineDateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
