@@ -39,6 +39,8 @@ secrets/
 
 # Personal tracker exports (never commit real observations)
 space-security-complete-backup-*.json
+space-security-field-log-*.json
+space-security-breath-observations*.json
 sst-milk-log*.json
 sst-breathlog*.json
 sst-fieldlog*.json
