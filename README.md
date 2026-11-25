@@ -121,3 +121,6 @@ Backups are ordinary, unencrypted JSON files. Browser local storage is also not 
 The root dashboard includes a visual Field Chronicle that combines the existing cessation, breath-observation, and private journal records into a chronological view. It adds a 12-month stacked SVG activity chart, descriptive record/day/reflection totals, date-grouped event cards, time-window and field filters, text search, and incremental loading.
 
 The timeline reads (but does not modify) the existing `sst.fieldlog.v1`, `sst.breathlog.v1`, and `sst.journal.v1` local-storage records. Counts describe recorded activity only; they are not health outcomes, streaks, scores, or breath-hold performance goals. The timeline introduces no server endpoint, database, external dependency, or new storage key.
+
+## Field Log 003 — Milk & dairy
+Private retrospective milk volume, calcium intake/source, digestive symptoms and notes. The founder's calcium/tolerance hypothesis is unverified; calcium is not a proven lactose intolerance treatment. No prescribed doses or food challenges. Stored in `sst.milklog.v1`, included in the timeline and unified backup. Older backups without milk data preserve existing milk records. Open `/public/space-security/milk-log/index.html`. Existing static routes and sync script suffice.
