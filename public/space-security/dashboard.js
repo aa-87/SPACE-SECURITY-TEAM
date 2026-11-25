@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var $=function(id){return document.getElementById(id)},filter='all';
+  var $=function(id){return document.getElementById(id)},filter='all',timelineLimit=12,timelineEvents=[];
   function read(key,fallback){try{var value=JSON.parse(localStorage.getItem(key)||'null');return value===null?fallback:value}catch(e){return fallback}}
   function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function dateLabel(value){var d=new Date(value);return isNaN(d.getTime())?'Date unavailable':d.toLocaleString(undefined,{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}
@@ -40,17 +40,46 @@
     $('dashCessationEntries').textContent=c.length+' ENTR'+(c.length===1?'Y':'IES');
     $('dashBreathEntries').textContent=validBreath.length+' ENTR'+(validBreath.length===1?'Y':'IES');
     renderInsights(c,validBreath);
-    var events=c.filter(Boolean).map(function(e){var kind=e.type==='cigarette'?'Cigarette entry':e.type==='craving'?'Craving observation':e.type==='blend'?'Tobacco / cannabis entry':e.type==='smokefree'?'Smoke-free milestone':'Cessation note';return {group:'cessation',date:e.when,title:kind,detail:[e.quantity&&e.type==='cigarette'?e.quantity+' cigarette(s)':null,e.craving!==''&&e.craving!=null?'Craving '+e.craving+'/10':null,e.trigger||null,e.notes||null].filter(Boolean).join(' · ')}}).concat(validBreath.map(function(e){return {group:'breath',date:e.date,title:'Breath observation · '+duration(e.seconds),detail:[e.context||null,e.notes||null].filter(Boolean).join(' · ')}})).concat((Array.isArray(journal)?journal:[]).filter(function(e){return e&&typeof e.date==='string'&&typeof e.body==='string'}).map(function(e){return {group:'journal',date:e.date,title:e.title||'Personal reflection',detail:e.body.length>180?e.body.slice(0,177)+'…':e.body}})).filter(function(e){return typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())}).sort(function(a,z){return new Date(z.date)-new Date(a.date)});
+    var events=c.filter(Boolean).map(function(e){var kind=e.type==='cigarette'?'Cigarette entry':e.type==='craving'?'Craving observation':e.type==='blend'?'Tobacco / cannabis entry':e.type==='smokefree'?'Smoke-free milestone':'Cessation note';return {group:'cessation',date:e.when,title:kind,detail:[e.quantity&&e.type==='cigarette'?e.quantity+' cigarette(s)':null,e.craving!==''&&e.craving!=null?'Craving '+e.craving+'/10':null,e.trigger||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,kind:e.type,trigger:e.trigger||''}}).concat(validBreath.map(function(e){return {group:'breath',date:e.date,title:'Breath observation',detail:[duration(e.seconds),e.context||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,seconds:Number(e.seconds),kind:'observation'}})).concat((Array.isArray(journal)?journal:[]).filter(function(e){return e&&typeof e.date==='string'&&typeof e.body==='string'}).map(function(e){return {group:'journal',date:e.date,title:e.title||'Personal reflection',detail:e.body,id:e.id,scope:e.scope||'general'}})).filter(function(e){return typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())}).sort(function(a,z){return new Date(z.date)-new Date(a.date)});
     window.__sstDashboardEvents=events;
+    timelineEvents=events;timelineLimit=12;renderTimeline();
     render();
     $('dashboardUpdated').textContent=events.length?'Updated just now · '+events.length+' records':'No local records yet';
     $('dashboardStatus').textContent='LOCAL STORAGE / '+(events.length?'CONNECTED':'READY');
   }
   function render(){
     var events=(window.__sstDashboardEvents||[]).filter(function(e){return filter==='all'||e.group===filter}).slice(0,8),host=$('combinedActivity');
-    if(!events.length){host.innerHTML='<p class="activity-empty">'+(filter==='all'?'Your observations will appear here when you add them to either field log.':'No '+(filter==='breath'?'breath':'cessation')+' records yet.')+'</p>';return}
+    if(!events.length){host.innerHTML='<p class="activity-empty">'+(filter==='all'?'Your observations will appear here when you add them to either field log.':'No '+(filter==='breath'?'breath':filter==='journal'?'journal':'cessation')+' records yet.')+'</p>';return}
     host.innerHTML=events.map(function(e){return '<article class="activity-item '+e.group+'"><span class="activity-mark" aria-hidden="true">'+(e.group==='breath'?'02':e.group==='journal'?'03':'01')+'</span><div class="activity-copy"><strong>'+esc(e.title)+'</strong><small>'+esc(dateLabel(e.date))+'</small>'+(e.detail?'<p>'+esc(e.detail)+'</p>':'')+'</div><span class="activity-type">'+(e.group==='breath'?'BREATH':e.group==='journal'?'JOURNAL':'CESSATION')+'</span></article>'}).join('');
   }
+
+  function timelineDateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function timelineDateLabel(d){return d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
+  function timelineMonthKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+  function timelineChart(events){
+    var now=new Date(),months=[],counts={},max=1;
+    for(var i=11;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth()-i,1),key=timelineMonthKey(d);months.push({key:key,label:d.toLocaleDateString(undefined,{month:'short'}),year:d.getFullYear()});counts[key]={cessation:0,breath:0,journal:0}}
+    events.forEach(function(e){var d=new Date(e.date),key=timelineMonthKey(d);if(counts[key]&&counts[key][e.group]!=null)counts[key][e.group]++});
+    months.forEach(function(m){max=Math.max(max,counts[m.key].cessation+counts[m.key].breath+counts[m.key].journal)});
+    var out='',base=142,plot=122,left=42,step=64,w=28;
+    [0,Math.ceil(max/2),max].filter(function(v,i,a){return a.indexOf(v)===i}).forEach(function(v){var y=base-v/max*plot;out+='<line class="tl-grid" x1="'+left+'" y1="'+y+'" x2="815" y2="'+y+'"/><text class="tl-axis" x="30" y="'+(y+4)+'" text-anchor="end">'+v+'</text>'});
+    months.forEach(function(m,i){var c=counts[m.key],x=left+i*step+14,y=base;[['cessation','tl-bar-cessation'],['breath','tl-bar-breath'],['journal','tl-bar-journal']].forEach(function(s){var v=c[s[0]],h=v/max*plot;y-=h;if(v)out+='<rect class="'+s[1]+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+Math.max(h,1)+'" rx="3"><title>'+m.label+' '+m.year+' · '+s[0]+': '+v+'</title></rect>'});out+='<text class="tl-axis" x="'+(x+w/2)+'" y="163" text-anchor="middle">'+m.label+'</text>'});
+    $('timelineChart').innerHTML=out;
+  }
+  function renderTimeline(){
+    var all=timelineEvents.slice().filter(function(e){return e.date&&!isNaN(new Date(e.date).getTime())}),now=new Date(),range=$('timelineRange').value,type=$('timelineType').value,q=$('timelineSearch').value.trim().toLowerCase();
+    timelineChart(all);$('timelineTotal').textContent=all.length.toLocaleString();$('timelineReflections').textContent=all.filter(function(e){return e.group==='journal'}).length.toLocaleString();
+    var days={};all.forEach(function(e){days[timelineDateKey(new Date(e.date))]=1});$('timelineDays').textContent=Object.keys(days).length.toLocaleString();
+    var first=all.length?all.reduce(function(a,b){return new Date(a.date)<new Date(b.date)?a:b}):null;$('timelineFirst').textContent=first?new Date(first.date).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'—';$('timelineSpan').textContent=first?Math.max(0,Math.floor((now-new Date(first.date))/86400000))+' days since first record':'Your timeline starts here';
+    var filtered=all.filter(function(e){var dt=new Date(e.date);return(range==='all'||dt>=new Date(now.getFullYear(),now.getMonth(),now.getDate()-Number(range)))&&(type==='all'||e.group===type)&&(!q||(e.title+' '+e.detail+' '+e.group).toLowerCase().includes(q))});
+    var host=$('personalTimeline');$('timelineShown').textContent=filtered.length+' '+(filtered.length===1?'RECORD':'RECORDS');
+    if(!filtered.length){host.innerHTML='<div class="timeline-empty"><span>✳</span><strong>No moments in this view.</strong><p>Try a wider time window or another field filter. Your original records are unchanged.</p></div>';$('timelineMore').hidden=true;$('timelineMoreNote').textContent='Your records remain in this browser.';return}
+    var shown=filtered.slice(0,timelineLimit),groups={},keys=[];shown.forEach(function(e){var k=timelineDateKey(new Date(e.date));if(!groups[k]){groups[k]=[];keys.push(k)}groups[k].push(e)});
+    host.innerHTML=keys.map(function(k){var d=new Date(k+'T12:00:00');return '<section class="timeline-day"><div class="timeline-day-date"><span class="timeline-day-number">'+String(d.getDate()).padStart(2,'0')+'</span><span><strong>'+esc(timelineDateLabel(d))+'</strong><small>'+groups[k].length+' '+(groups[k].length===1?'moment':'moments')+'</small></span></div><div class="timeline-day-events">'+groups[k].map(function(e){var icon=e.group==='cessation'?'01':e.group==='breath'?'02':'03',label=e.group==='cessation'?'CESSATION':e.group==='breath'?'BREATH':'JOURNAL',time=new Date(e.date).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});return '<article class="timeline-event '+e.group+'"><span class="timeline-event-marker">'+icon+'</span><div class="timeline-event-content"><div class="timeline-event-top"><span>'+label+'</span><time>'+esc(time)+'</time></div><h5>'+esc(e.title)+'</h5>'+(e.detail?'<p>'+esc(e.detail)+'</p>':'')+(e.group==='journal'?'<span class="timeline-event-tag">'+esc(e.scope||'general')+'</span>':'')+'</div></article>'}).join('')+'</div></section>'}).join('');
+    $('timelineMore').hidden=filtered.length<=timelineLimit;$('timelineMoreNote').textContent='Showing '+shown.length+' of '+filtered.length+' matching records · stored only in this browser';
+  }
+  ['timelineRange','timelineType'].forEach(function(id){$(id).addEventListener('change',function(){timelineLimit=12;renderTimeline()})});
+  $('timelineSearch').addEventListener('input',function(){timelineLimit=12;renderTimeline()});$('timelineMore').addEventListener('click',function(){timelineLimit+=12;renderTimeline()});
   document.querySelectorAll('.activity-filter').forEach(function(button){button.addEventListener('click',function(){filter=button.getAttribute('data-filter');document.querySelectorAll('.activity-filter').forEach(function(other){var active=other===button;other.classList.toggle('is-active',active);other.setAttribute('aria-pressed',active?'true':'false')});render()})});
   $('dashboardRefresh').addEventListener('click',load);
   window.addEventListener('storage',function(event){if(event.key==='sst.landing.theme'){if(event.newValue==='light'||event.newValue==='dark')document.documentElement.setAttribute('data-theme',event.newValue);return}if(!event.key||event.key==='sst.fieldlog.v1'||event.key==='sst.breathlog.v1'||event.key==='sst.journal.v1')load()});
