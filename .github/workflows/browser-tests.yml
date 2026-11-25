@@ -10,15 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
       - run: node tests/local-data.test.js
       - run: npm install --no-save --no-package-lock @playwright/test@1.51.1
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: browser-test-results
