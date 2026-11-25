@@ -27,7 +27,7 @@
       var node=document.getElementById(id);if(!node)return;
       try{var raw=localStorage.getItem(k),data=raw?JSON.parse(raw):[];if(object&&raw)data=data.entries;if(!Array.isArray(data))throw Error();var n=data.length;node.textContent=n+' ENTR'+(n===1?'Y':'IES')}catch(e){node.textContent='COUNT UNAVAILABLE'}
     }
-    function counts(){count('dashCessationEntries','sst.fieldlog.v1',true);count('dashBreathEntries','sst.breathlog.v1',false);count('dashMilkEntries','sst.milklog.v1',false)}
+    function counts(){if(window.SSTDemo)return;count('dashCessationEntries','sst.fieldlog.v1',true);count('dashBreathEntries','sst.breathlog.v1',false);count('dashMilkEntries','sst.milklog.v1',false)}
     function sync(){apply(preferred());counts()}
     theme.addEventListener('click',function(){var t=root.getAttribute('data-theme')==='light'?'dark':'light';try{localStorage.setItem(key,t)}catch(e){}apply(t)});
     function close(focus){menu.open=false;if(focus)toggle.focus()}
@@ -37,7 +37,7 @@
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&menu.open){e.preventDefault();close(true)}});
     menu.addEventListener('focusout',function(e){if(e.relatedTarget&&!menu.contains(e.relatedTarget))close(false)});
     function normalize(p){return p.replace(/index\.html$/,'').replace(/\/$/,'')||'/'}
-    menu.querySelectorAll('a').forEach(function(a){if(normalize(a.pathname)===normalize(window.location.pathname)){a.setAttribute('aria-current','page');var arrow=a.querySelector('.tracker-menu-arrow');if(arrow)arrow.textContent='✓'}a.addEventListener('click',function(){close(false)})});
+    menu.querySelectorAll('a').forEach(function(a){if(window.SSTDemo)a.setAttribute('title','Open your personal tracker (exit demo)');if(normalize(a.pathname)===normalize(window.location.pathname)){a.setAttribute('aria-current','page');var arrow=a.querySelector('.tracker-menu-arrow');if(arrow)arrow.textContent='✓'}a.addEventListener('click',function(){close(false)})});
     window.addEventListener('storage',function(e){if(!e.key||e.key===key||['sst.fieldlog.v1','sst.breathlog.v1','sst.milklog.v1'].includes(e.key))sync()});
     window.addEventListener('pageshow',function(e){if(e.persisted)sync()});
     var refresh=document.getElementById('dashboardRefresh');if(refresh)refresh.addEventListener('click',sync);
