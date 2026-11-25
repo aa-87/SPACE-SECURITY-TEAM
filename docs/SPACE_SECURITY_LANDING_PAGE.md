@@ -126,3 +126,13 @@ The dashboard is read-only. It does not modify or merge the source records, uplo
 The dashboard, cessation tracker, and breath observation log use the shared theme preference `sst.landing.theme`. Existing tracker data keys and schemas are preserved. Browser local storage is origin- and profile-specific: records stored under another hostname, subdomain, protocol, or browser profile are not automatically shared. Use each tool's JSON export/import features for manual backup or transfer.
 
 The breath-observation feed remains descriptive only. It does not rank durations, set targets, coach breath-holding, or provide medical advice.
+
+## Personal insights panel
+
+The command dashboard includes three additional read-only insights, computed locally in `public/space-security/dashboard.js`:
+
+1. A rolling 14-calendar-day stacked bar chart of cessation and breath-log entries by local calendar date.
+2. Up to three most frequently entered cessation trigger labels over the preceding 30 days, grouped case-insensitively.
+3. The average of numeric craving ratings entered in the preceding 14 days.
+
+These are summaries of recorded activity only. They do not infer causes, health outcomes, cessation efficacy, or fitness. Breath observations are counted as log entries only; durations are not graphed, ranked, compared, or converted into goals. The insight calculations are read-only and use the same local storage records as the rest of the dashboard.
