@@ -12,35 +12,13 @@
 </header>
 
 <main id="main">
-  <section class="hero shell">
-    <div class="hero-copy">
-      <p class="eyebrow"><span class="status-light"></span> FIELD PROGRAM 001 <span class="eyebrow-rule"></span> STATUS: ASSEMBLING</p>
-      <h1>The mission<br>begins <em>within.</em></h1>
-      <p class="hero-lede">A self-directed training ground for people who want to understand themselves, break old patterns, and build a stronger human instrument.</p>
-      <div class="hero-actions">
-        <a class="button button-red tracker-launch" href="#trackerMenu">OPEN TRACKERS <span aria-hidden="true">↗</span></a>
-        <a class="quiet-link" href="https://github.com/aa-87/mumps.io" target="_blank" rel="noopener">BUILT ON OPEN SOURCE <span aria-hidden="true">↗</span></a>
-      </div>
-      <p class="hero-lede" style="margin-top:12px">Smoking cessation · Breath observation · Milk consumption</p><div class="hero-note"><span class="note-symbol">✳</span><span>Not a boot camp. Not a miracle cure.<br>A logbook for honest experiments and steady progress.</span></div>
-    </div>
-    <div class="hero-visual" role="img" aria-label="Abstract orbital chart showing a red central star and orbiting points">
-      <div class="visual-top"><span>SECTOR 001 / SOL</span><span>40° 43′ N — 74° 00′ W</span></div>
-      <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div>
-      <div class="axis axis-x"></div><div class="axis axis-y"></div>
-      <div class="core"><span class="core-ring"></span><span class="core-dot"></span></div>
-      <span class="satellite satellite-one"></span><span class="satellite satellite-two"></span><span class="satellite satellite-three"></span>
-      <div class="visual-label label-one"><b>01</b><span>BODY</span></div>
-      <div class="visual-label label-two"><b>02</b><span>MIND</span></div>
-      <div class="visual-label label-three"><b>03</b><span>METHOD</span></div>
-      <div class="visual-bottom"><span>HUMAN POTENTIAL / OPEN ENDED</span><span class="crosshair">＋</span></div>
-    </div>
-    <div class="hero-index"><span>01 — 04</span><span>AN EXPERIMENT IN BECOMING</span><span>SCROLL TO EXPLORE ↓</span></div>
-  </section>
-
+  <section class="rc-welcome shell"><div><p class="eyebrow">SPACE SECURITY / PERSONAL COMMAND</p><h1>Your observations.<br><em>Your context.</em></h1><p>Three private trackers and a journal. Start with an observation, then revisit your history when it is useful.</p><div class="rc-actions"><a class="button button-red tracker-launch" href="#trackerMenu">OPEN TRACKERS ↗</a><a class="button button-outline" id="demoLink" href="/?demo=1">Explore sample dashboard</a></div><p class="rc-private">Local browser storage · No account · No record uploads</p></div><svg viewBox="0 0 260 180" aria-hidden="true"><g fill="none" stroke="currentColor"><ellipse cx="130" cy="90" rx="115" ry="54" transform="rotate(-25 130 90)" opacity=".3"/><ellipse cx="130" cy="90" rx="115" ry="54" transform="rotate(25 130 90)" opacity=".3"/><circle cx="130" cy="90" r="64" stroke-dasharray="2 6" opacity=".5"/><circle cx="130" cy="90" r="35" opacity=".6"/></g><circle cx="130" cy="90" r="13" fill="currentColor"/><circle cx="40" cy="112" r="5" fill="currentColor"/><circle cx="205" cy="46" r="5" fill="currentColor"/></svg></section>
+  <aside class="rc-demo shell" id="demoBanner" hidden><strong>DEMONSTRATION / FICTIONAL RECORDS</strong><p>Read-only preview. Your personal records are not used by these charts. Editing and backup tools are disabled here.</p><a href="/">Exit demo and return to my records</a></aside>
+  <nav class="rc-section-nav shell" aria-label="Dashboard sections"><a href="#dashboard">Overview</a><a href="#insights">Insights</a><a href="#timeline">Timeline</a><a href="#journal-title">Journal</a><a href="#data-management">Data management</a></nav>
   <section class="dashboard shell" id="dashboard" aria-labelledby="dashboard-title">
     <div class="section-head"><p class="eyebrow">00 / FIELD COMMAND</p><span class="micro">LIVE LOCAL DATA / THIS BROWSER</span></div>
     <div class="dashboard-heading">
-      <div><p class="dashboard-kicker">PERSONAL OPERATIONS / OVERVIEW</p><h2 id="dashboard-title">Your field<br><em>dashboard.</em></h2><p class="dashboard-intro">Three private logs. One private journal. One view of your observations. Your records and reflections stay in this browser profile and are never sent to a server.</p><a class="tracker-launch" href="#trackerMenu">Choose a tracker ↗</a></div>
+      <div><p class="dashboard-kicker">PERSONAL OPERATIONS / OVERVIEW</p><h2 id="dashboard-title">Your field<br><em>dashboard.</em></h2><p class="dashboard-intro">Three private logs. One private journal. One view of your observations. Personal records and reflections stay in this browser profile and are never sent to a server.</p><a class="tracker-launch" href="#trackerMenu">Choose a tracker ↗</a></div>
       <div class="dashboard-status"><span class="status-light"></span><span><b id="dashboardStatus">LOCAL STORAGE READY</b><small id="dashboardUpdated">Waiting for local records</small></span><button type="button" id="dashboardRefresh" aria-label="Refresh dashboard" title="Refresh dashboard">↻</button></div>
     </div>
     <div class="dashboard-stats" aria-live="polite">
@@ -49,7 +27,7 @@
       <article class="dashboard-stat"><span>BREATH / OBSERVATIONS</span><strong id="dashBreathCount">0</strong><small id="dashBreathLatest">No observations recorded</small></article>
       <article class="dashboard-stat"><span>ALL LOGS / TOTAL ENTRIES</span><strong id="dashTotal">0</strong><small id="dashBreakdown">0 cessation · 0 breath · 0 milk · 0 journal</small></article>
     </div>
-    <section class="insights-panel" aria-labelledby="insights-title">
+    <section id="insights" class="insights-panel" aria-labelledby="insights-title">
       <div class="insights-heading"><div><p class="dashboard-kicker">PATTERN REVIEW / 14 DAYS</p><h3 id="insights-title">Your activity, in context.</h3><p>See when you have been recording observations and which triggers appear most often. These are descriptive summaries, not judgments or medical conclusions.</p></div><span class="insights-window">ROLLING 14-DAY VIEW</span></div>
       <div class="insights-grid">
         <article class="insight-chart-card">
@@ -120,7 +98,7 @@
           <div id="journalList" class="journal-list" aria-live="polite"><p class="journal-empty">Your reflections will appear here. Start with one thing you noticed.</p></div>
         </div>
       </div>
-      <div class="backup-strip">
+      <div class="backup-strip" id="data-management">
         <div class="backup-copy"><span class="insight-label">PORTABILITY / YOUR DATA, YOUR COPY</span><strong>One backup. All your records.</strong><p>Export all three field logs, your reflections, and theme preference into one JSON file. Restore it later on this browser or another device.</p></div>
         <div class="backup-actions"><button type="button" class="button button-outline" id="backupExport">EXPORT COMPLETE BACKUP <span aria-hidden="true">↓</span></button><label class="button button-outline backup-import-label" for="backupImport">RESTORE FROM BACKUP <span aria-hidden="true">↗</span></label><input class="sr-only" type="file" id="backupImport" accept="application/json,.json"></div>
         <p class="backup-status" id="backupStatus" role="status">Backup files contain sensitive personal notes. Keep them somewhere private.</p>
@@ -129,6 +107,7 @@
     <p class="dashboard-disclaimer"><strong>Data boundary.</strong> The dashboard reads the three tracker stores and private journal records in this browser. It does not upload them. Use the unified backup above to export them together. Breath-hold observations are shown for record-keeping only; no duration target, ranking, or training advice is provided.</p>
   </section>
 
+  <details class="rc-about shell"><summary>About Space Security Team and the founding ideas</summary>
   <section class="ticker" aria-label="Program principles">
     <div class="ticker-track"><span>OBSERVE</span><i>✳</i><span>LOG</span><i>✳</i><span>LEARN</span><i>✳</i><span>ADAPT</span><i>✳</i><span>REPEAT</span><i>✳</i><span>OBSERVE</span><i>✳</i><span>LOG</span><i>✳</i><span>LEARN</span><i>✳</i><span>ADAPT</span><i>✳</i><span>REPEAT</span></div>
   </section>
@@ -219,11 +198,13 @@
     <a class="button button-red" href="#dashboard">OPEN THE COMMAND DASHBOARD <span aria-hidden="true">↗</span></a>
     <a class="quiet-link" href="https://github.com/aa-87/mumps.io" target="_blank" rel="noopener">EXPLORE THE MUMPS.IO REPOSITORY <span aria-hidden="true">↗</span></a>
   </section>
+  </details>
 </main>
 
 <footer class="footer shell"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-name">SPACE SECURITY<span>TEAM / EARTH DIVISION</span></span></a><p>AN OPEN-ENDED HUMAN EXPERIMENT.</p><span>BUILT ON MUMPS.IO <b>✳</b></span></footer>
 
 
 
+<script src="/public/space-security/demo.js" defer></script>
 <script src="/public/space-security/dashboard.js" defer></script>
 <script src="/public/space-security/journal.js" defer></script>
