@@ -136,3 +136,12 @@ The command dashboard includes three additional read-only insights, computed loc
 3. The average of numeric craving ratings entered in the preceding 14 days.
 
 These are summaries of recorded activity only. They do not infer causes, health outcomes, cessation efficacy, or fitness. Breath observations are counted as log entries only; durations are not graphed, ranked, compared, or converted into goals. The insight calculations are read-only and use the same local storage records as the rest of the dashboard.
+
+
+## Private journal and complete backup
+
+The dashboard contains a private reflection journal in `public/space-security/journal.js`, stored under `sst.journal.v1`. Notes have a date, optional title, body, and scope: general, cessation, breath, or both. They can be searched, filtered, edited, and deleted, and appear in the combined activity feed without modifying either tracker.
+
+The versioned `sst-complete-backup-v1` JSON export includes the entire `sst.fieldlog.v1` object (including profile/baseline), the `sst.breathlog.v1` array, `sst.journal.v1`, and the shared theme preference. Restore validates all datasets first and offers replacement or merge; merge deduplicates by ID and imported records take precedence. A failed write attempts rollback. Files over 5 MB are rejected.
+
+**Privacy:** exports are ordinary unencrypted JSON, and this app does not encrypt browser local storage. Keep backup files and access to the browser profile private. Data is not uploaded or synchronized.
