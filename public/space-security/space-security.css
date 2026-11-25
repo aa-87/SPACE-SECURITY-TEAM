@@ -281,3 +281,5 @@
 
 /* Keep expanded navigation balanced as the dashboard gains sections. */
 @media(max-width:1100px){.topnav{gap:16px;font-size:8px}.topnav .nav-cta{display:none}}
+
+.milk-tool{border-color:#43b99b66}.milk-tool .tool-symbol{color:#43b99b}.tl-legend-milk{background:#43b99b}.tl-bar-milk{fill:#43b99b}.timeline-event.milk .timeline-event-marker,.activity-item.milk .activity-mark{color:#43b99b;border-color:#43b99b66;background:#43b99b15}
