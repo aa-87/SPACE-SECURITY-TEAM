@@ -53,6 +53,29 @@
       <article class="dashboard-stat"><span>BREATH / OBSERVATIONS</span><strong id="dashBreathCount">0</strong><small id="dashBreathLatest">No observations recorded</small></article>
       <article class="dashboard-stat"><span>ALL LOGS / TOTAL ENTRIES</span><strong id="dashTotal">0</strong><small id="dashBreakdown">0 cessation · 0 breath</small></article>
     </div>
+    <section class="insights-panel" aria-labelledby="insights-title">
+      <div class="insights-heading"><div><p class="dashboard-kicker">PATTERN REVIEW / 14 DAYS</p><h3 id="insights-title">Your activity, in context.</h3><p>See when you have been recording observations and which triggers appear most often. These are descriptive summaries, not judgments or medical conclusions.</p></div><span class="insights-window">ROLLING 14-DAY VIEW</span></div>
+      <div class="insights-grid">
+        <article class="insight-chart-card">
+          <div class="insight-card-head"><div><span class="insight-label">RECORDING RHYTHM</span><strong>Daily observations</strong></div><div class="chart-legend"><span><i class="legend-cessation"></i> CESSATION</span><span><i class="legend-breath"></i> BREATH</span></div></div>
+          <div class="insight-chart-wrap"><svg id="activityChart" viewBox="0 0 720 218" role="img" aria-label="Stacked bar chart showing daily cessation and breath log entries for the last 14 days"><text x="360" y="110" text-anchor="middle">Your activity will appear here.</text></svg></div>
+          <div class="chart-period"><span>14 DAYS AGO</span><span>TODAY</span></div>
+          <p class="insight-footnote">Counts are entries saved by date, not a measure of success or health.</p>
+        </article>
+        <div class="insight-side">
+          <article class="insight-card">
+            <span class="insight-label">MOST RECORDED TRIGGERS / 30 DAYS</span>
+            <div id="triggerInsights" class="trigger-insights"><p class="insight-empty">Add trigger details to cessation entries to see recurring themes.</p></div>
+          </article>
+          <article class="insight-card insight-average">
+            <span class="insight-label">RECORDED CRAVING INTENSITY / 14 DAYS</span>
+            <strong id="recentCravingAverage">—</strong>
+            <small id="recentCravingCount">No recent ratings</small>
+            <p>This is the average of ratings you entered during the period. It does not predict future cravings.</p>
+          </article>
+        </div>
+      </div>
+    </section>
     <div class="dashboard-tools">
       <article class="dashboard-tool cessation-tool">
         <div class="dashboard-tool-top"><span class="tool-index">FIELD LOG / 001</span><span class="tool-state"><i></i> ACTIVE</span></div>
