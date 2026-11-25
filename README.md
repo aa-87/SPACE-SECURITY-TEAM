@@ -1,7 +1,7 @@
 # Space Security Team
 
 **Live codename deployment:** [https://efuhair.com](https://efuhair.com)
-
+![](https://github.com/aa-87/SPACE-SECURITY-TEAM/blob/main/docs/efuhair.gif)
 A MUMPS.IO / MIOTPL project with a unified local-first command dashboard and two standalone, browser-local field logs.
 
 ## Project structure
