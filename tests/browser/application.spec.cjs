@@ -23,3 +23,19 @@ await page.goto(base+'milk-log/index.html');await page.locator('#ml').fill('150'
 await page.goto('/');await page.locator('#journalScope').selectOption('milk');await page.locator('#journalTitle').fill('Synthetic note');await page.locator('#journalBody').fill('Recorded context');await page.locator('#journalSave').click();await expect(page.locator('#journalList')).toContainText('Synthetic note');await expect(page.locator('#dashTotal')).toHaveText('4');
 await page.reload();await expect(page.locator('#dashTotal')).toHaveText('4');await page.locator('#timelineType').selectOption('milk');await expect(page.locator('#timelineShown')).toHaveText('1 RECORD');
 });
+
+test('backup restore and cancel',async({page})=>{
+await page.goto('/');
+const date=new Date().toISOString();
+const backup={format:'sst-complete-backup-v1',version:1,exportedAt:date,data:{cessation:{entries:[],profile:{baseline:'',startDate:'',goal:'Understand my patterns'},theme:'dark'},breath:[],milk:[],journal:[{id:'restored',date,scope:'all',title:'Restored test',body:'Synthetic restore'}],preferences:{theme:'dark'}}};
+const input=page.locator('#backupImport');
+page.on('dialog',d=>d.accept());
+await input.setInputFiles({name:'backup.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
+await expect(page.locator('#journalList')).toContainText('Restored test');
+await expect(page.locator('#backupStatus')).toContainText('Restore complete');
+page.removeAllListeners('dialog');page.on('dialog',d=>d.dismiss());
+backup.data.journal=[];
+await input.setInputFiles({name:'cancel.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
+await expect(page.locator('#journalList')).toContainText('Restored test');
+const download=page.waitForEvent('download');await page.locator('#backupExport').click();expect((await download).suggestedFilename()).toMatch(/complete-backup/);
+});
