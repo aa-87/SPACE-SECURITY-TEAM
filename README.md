@@ -10,7 +10,7 @@ A privacy-first personal observation workspace built on [MUMPS.IO](https://githu
 
 **Status:** v0.1.0 release candidate. The live codename deployment may lag behind repository changes. The CI badge reports automated fixture tests, not certification of the live MUMPS server.
 
-![Space Security Team application demonstration](docs/efuhair.gif)
+![Space Security Team application demonstration](docs/fuh.gif)
 
 *Recorded project demonstration; appearance may differ from the current release candidate.*
 
