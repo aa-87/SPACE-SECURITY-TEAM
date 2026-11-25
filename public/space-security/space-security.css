@@ -323,3 +323,8 @@
 @media(max-width:950px){.topbar{padding:12px 5%;gap:16px}.hero{min-height:0;padding-top:44px;gap:24px}.hero-visual{height:300px}}
 @media(max-width:760px){.topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;padding:12px 5%;min-height:0}.topbar>.brand{grid-column:1;grid-row:1}.topbar .theme-toggle{grid-column:2;grid-row:1}.topbar .topnav{grid-column:1/-1;grid-row:2;justify-content:space-between;gap:8px;min-width:0;flex-wrap:wrap}.topbar .topnav>a{font-size:12px;min-height:44px}.tracker-menu{position:static}.tracker-menu summary{padding:9px 12px}.tracker-menu-panel{top:calc(100% + 4px);left:5%;right:5%;width:auto}.hero{padding-top:30px}.hero h1{font-size:clamp(46px,10vw,64px)}.hero-visual{height:220px}.hero-index{margin-top:6px}.hero-note{margin-top:18px}}
 @media(max-width:350px){.topbar .topnav{justify-content:flex-start;gap:5px 12px}.tracker-menu summary{font-size:12px}.tracker-menu-panel{left:3%;right:3%}}
+
+/* Third tracker in the short-term activity chart. */
+.bar-milk{fill:#43b99b}.legend-milk{background:#43b99b}
+.journal-form input,.journal-form textarea,.journal-form select,.journal-list-controls input,.journal-list-controls select{font-size:14px}.journal-entry-body{font-size:13px}.journal-entry-actions button{min-height:36px;font-size:10px}.journal-form label{font-size:10px}.journal-panel [hidden]{display:none}
+@media(max-width:620px){.journal-form input,.journal-form textarea,.journal-form select,.journal-list-controls input,.journal-list-controls select{font-size:16px}.journal-entry-body{font-size:14px}}
