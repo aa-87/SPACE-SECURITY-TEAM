@@ -25,7 +25,7 @@
   }
   function load(){
     var cessation=read('sst.fieldlog.v1',{}),breath=read('sst.breathlog.v1',[]),journal=read('sst.journal.v1',[]);
-    var c=cessation&&Array.isArray(cessation.entries)?cessation.entries:[],b=Array.isArray(breath)?breath:[];
+    var c=cessation&&Array.isArray(cessation.entries)?cessation.entries:[],b=Array.isArray(breath)?breath:[],validJournal=(Array.isArray(journal)?journal:[]).filter(function(e){return e&&typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())&&typeof e.body==='string'});
     var cigarettes=c.filter(function(e){return e&&e.type==='cigarette'}).reduce(function(sum,e){return sum+(Number(e.quantity)||0)},0);
     var cravings=c.filter(function(e){return e&&e.craving!==''&&e.craving!=null&&Number.isFinite(Number(e.craving))}).map(function(e){return Number(e.craving)});
     var average=cravings.length?(cravings.reduce(function(a,n){return a+n},0)/cravings.length).toFixed(1)+'/10':'—';
@@ -35,12 +35,12 @@
     $('dashCravingCount').textContent=cravings.length?cravings.length+' rated observations':'No craving ratings yet';
     $('dashBreathCount').textContent=validBreath.length.toLocaleString();
     $('dashBreathLatest').textContent=validBreath.length?'Latest: '+duration(validBreath[0].seconds):'No observations recorded';
-    $('dashTotal').textContent=(c.length+validBreath.length).toLocaleString();
-    $('dashBreakdown').textContent=c.length+' cessation · '+validBreath.length+' breath';
+    $('dashTotal').textContent=(c.length+validBreath.length+validJournal.length).toLocaleString();
+    $('dashBreakdown').textContent=c.length+' cessation · '+validBreath.length+' breath · '+validJournal.length+' journal';
     $('dashCessationEntries').textContent=c.length+' ENTR'+(c.length===1?'Y':'IES');
     $('dashBreathEntries').textContent=validBreath.length+' ENTR'+(validBreath.length===1?'Y':'IES');
     renderInsights(c,validBreath);
-    var events=c.filter(Boolean).map(function(e){var kind=e.type==='cigarette'?'Cigarette entry':e.type==='craving'?'Craving observation':e.type==='blend'?'Tobacco / cannabis entry':e.type==='smokefree'?'Smoke-free milestone':'Cessation note';return {group:'cessation',date:e.when,title:kind,detail:[e.quantity&&e.type==='cigarette'?e.quantity+' cigarette(s)':null,e.craving!==''&&e.craving!=null?'Craving '+e.craving+'/10':null,e.trigger||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,kind:e.type,trigger:e.trigger||''}}).concat(validBreath.map(function(e){return {group:'breath',date:e.date,title:'Breath observation',detail:[duration(e.seconds),e.context||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,seconds:Number(e.seconds),kind:'observation'}})).concat((Array.isArray(journal)?journal:[]).filter(function(e){return e&&typeof e.date==='string'&&typeof e.body==='string'}).map(function(e){return {group:'journal',date:e.date,title:e.title||'Personal reflection',detail:e.body,id:e.id,scope:e.scope||'general'}})).filter(function(e){return typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())}).sort(function(a,z){return new Date(z.date)-new Date(a.date)});
+    var events=c.filter(Boolean).map(function(e){var kind=e.type==='cigarette'?'Cigarette entry':e.type==='craving'?'Craving observation':e.type==='blend'?'Tobacco / cannabis entry':e.type==='smokefree'?'Smoke-free milestone':'Cessation note';return {group:'cessation',date:e.when,title:kind,detail:[e.quantity&&e.type==='cigarette'?e.quantity+' cigarette(s)':null,e.craving!==''&&e.craving!=null?'Craving '+e.craving+'/10':null,e.trigger||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,kind:e.type,trigger:e.trigger||''}}).concat(validBreath.map(function(e){return {group:'breath',date:e.date,title:'Breath observation',detail:[duration(e.seconds),e.context||null,e.notes||null].filter(Boolean).join(' · '),id:e.id,seconds:Number(e.seconds),kind:'observation'}})).concat(validJournal.map(function(e){return {group:'journal',date:e.date,title:e.title||'Personal reflection',detail:e.body,id:e.id,scope:e.scope||'general'}})).filter(function(e){return typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())}).sort(function(a,z){return new Date(z.date)-new Date(a.date)});
     window.__sstDashboardEvents=events;
     timelineEvents=events;timelineLimit=12;renderTimeline();
     render();
@@ -71,7 +71,7 @@
     timelineChart(all);$('timelineTotal').textContent=all.length.toLocaleString();$('timelineReflections').textContent=all.filter(function(e){return e.group==='journal'}).length.toLocaleString();
     var days={};all.forEach(function(e){days[timelineDateKey(new Date(e.date))]=1});$('timelineDays').textContent=Object.keys(days).length.toLocaleString();
     var first=all.length?all.reduce(function(a,b){return new Date(a.date)<new Date(b.date)?a:b}):null;$('timelineFirst').textContent=first?new Date(first.date).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'—';$('timelineSpan').textContent=first?Math.max(0,Math.floor((now-new Date(first.date))/86400000))+' days since first record':'Your timeline starts here';
-    var filtered=all.filter(function(e){var dt=new Date(e.date);return(range==='all'||dt>=new Date(now.getFullYear(),now.getMonth(),now.getDate()-Number(range)))&&(type==='all'||e.group===type)&&(!q||(e.title+' '+e.detail+' '+e.group).toLowerCase().includes(q))});
+    var filtered=all.filter(function(e){var dt=new Date(e.date);return(range==='all'||dt>=new Date(now.getFullYear(),now.getMonth(),now.getDate()-(Number(range)-1)))&&(type==='all'||e.group===type)&&(!q||(e.title+' '+e.detail+' '+e.group).toLowerCase().includes(q))});
     var host=$('personalTimeline');$('timelineShown').textContent=filtered.length+' '+(filtered.length===1?'RECORD':'RECORDS');
     if(!filtered.length){host.innerHTML='<div class="timeline-empty"><span>✳</span><strong>No moments in this view.</strong><p>Try a wider time window or another field filter. Your original records are unchanged.</p></div>';$('timelineMore').hidden=true;$('timelineMoreNote').textContent='Your records remain in this browser.';return}
     var shown=filtered.slice(0,timelineLimit),groups={},keys=[];shown.forEach(function(e){var k=timelineDateKey(new Date(e.date));if(!groups[k]){groups[k]=[];keys.push(k)}groups[k].push(e)});
