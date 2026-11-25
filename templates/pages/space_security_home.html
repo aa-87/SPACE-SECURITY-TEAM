@@ -47,14 +47,14 @@
       <article class="dashboard-stat"><span>CESSATION / CIGARETTES RECORDED</span><strong id="dashCigarettes">0</strong><small>Across cigarette entries</small></article>
       <article class="dashboard-stat"><span>CRAVING / AVERAGE INTENSITY</span><strong id="dashCraving">—</strong><small id="dashCravingCount">No craving ratings yet</small></article>
       <article class="dashboard-stat"><span>BREATH / OBSERVATIONS</span><strong id="dashBreathCount">0</strong><small id="dashBreathLatest">No observations recorded</small></article>
-      <article class="dashboard-stat"><span>ALL LOGS / TOTAL ENTRIES</span><strong id="dashTotal">0</strong><small id="dashBreakdown">0 cessation · 0 breath</small></article>
+      <article class="dashboard-stat"><span>ALL LOGS / TOTAL ENTRIES</span><strong id="dashTotal">0</strong><small id="dashBreakdown">0 cessation · 0 breath · 0 milk · 0 journal</small></article>
     </div>
     <section class="insights-panel" aria-labelledby="insights-title">
       <div class="insights-heading"><div><p class="dashboard-kicker">PATTERN REVIEW / 14 DAYS</p><h3 id="insights-title">Your activity, in context.</h3><p>See when you have been recording observations and which triggers appear most often. These are descriptive summaries, not judgments or medical conclusions.</p></div><span class="insights-window">ROLLING 14-DAY VIEW</span></div>
       <div class="insights-grid">
         <article class="insight-chart-card">
-          <div class="insight-card-head"><div><span class="insight-label">RECORDING RHYTHM</span><strong>Daily observations</strong></div><div class="chart-legend"><span><i class="legend-cessation"></i> CESSATION</span><span><i class="legend-breath"></i> BREATH</span></div></div>
-          <div class="insight-chart-wrap"><svg id="activityChart" viewBox="0 0 720 218" role="img" aria-label="Stacked bar chart showing daily cessation and breath log entries for the last 14 days"><text x="360" y="110" text-anchor="middle">Your activity will appear here.</text></svg></div>
+          <div class="insight-card-head"><div><span class="insight-label">RECORDING RHYTHM</span><strong>Daily observations</strong></div><div class="chart-legend"><span><i class="legend-cessation"></i> CESSATION</span><span><i class="legend-breath"></i> BREATH</span><span><i class="legend-milk"></i> MILK</span></div></div>
+          <div class="insight-chart-wrap"><svg id="activityChart" viewBox="0 0 720 218" role="img" aria-label="Stacked bar chart showing daily cessation, breath, and milk log entries for the last 14 days"><text x="360" y="110" text-anchor="middle">Your activity will appear here.</text></svg></div>
           <div class="chart-period"><span>14 DAYS AGO</span><span>TODAY</span></div>
           <p class="insight-footnote">Counts are entries saved by date, not a measure of success or health.</p>
         </article>
@@ -90,7 +90,7 @@
       </div>
       <div class="timeline-feed-head"><div><span class="insight-label">CHRONOLOGICAL RECORD</span><h4>Moments, in sequence.</h4><p>Browse the details, revisit context, and notice how your story changes over time.</p></div><span class="timeline-record-count" id="timelineShown">0 RECORDS</span></div>
       <div class="timeline-controls" role="group" aria-label="Timeline filters">
-        <label><span>TIME WINDOW</span><select id="timelineRange"><option value="30">Last 30 days</option><option value="90" selected>Last 90 days</option><option value="365">Last 12 months</option><option value="all">All records</option></select></label>
+        <label><span>TIME WINDOW</span><select id="timelineRange"><option value="30">Last 30 days</option><option value="90" selected>Last 90 days</option><option value="365">Last 365 days</option><option value="all">All records</option></select></label>
         <label><span>FIELD</span><select id="timelineType"><option value="all">All records</option><option value="cessation">Cessation</option><option value="breath">Breath</option><option value="milk">Milk &amp; dairy</option><option value="journal">Journal</option></select></label>
         <label class="timeline-search"><span>FIND A MOMENT</span><input id="timelineSearch" type="search" placeholder="Search notes, triggers, context…"></label>
       </div>
@@ -103,30 +103,30 @@
       <div class="activity-foot"><span>DISPLAYING UP TO 8 RECENT RECORDS</span><span>REFRESHES WHEN A LOG IS UPDATED</span></div>
     </section>
     <section class="journal-panel" aria-labelledby="journal-title">
-      <div class="journal-heading"><div><p class="dashboard-kicker">PRIVATE FIELD NOTES / 003</p><h3 id="journal-title">Make sense of the entries.</h3><p>A quiet place to connect observations, record what you learned, and leave a note for your future self. Nothing here leaves this browser.</p></div><span class="journal-local-tag">LOCAL / PRIVATE</span></div>
+      <div class="journal-heading"><div><p class="dashboard-kicker">PRIVATE FIELD NOTES / JOURNAL</p><h3 id="journal-title">Make sense of the entries.</h3><p>A quiet place to connect observations, record what you learned, and leave a note for your future self. Nothing here leaves this browser.</p></div><span class="journal-local-tag">LOCAL / PRIVATE</span></div>
       <div class="journal-layout">
         <form id="journalForm" class="journal-form">
           <input type="hidden" id="journalId" value="">
           <div class="journal-form-top"><strong id="journalFormHeading">NEW REFLECTION</strong><span>OPTIONAL / NO STREAKS</span></div>
           <label for="journalDate">DATE & TIME</label><input id="journalDate" type="datetime-local" required>
-          <label for="journalScope">CONNECTED TO</label><select id="journalScope"><option value="general">General reflection</option><option value="cessation">Cessation log</option><option value="breath">Breath observation log</option><option value="both">Both field logs</option></select>
+          <label for="journalScope">CONNECTED TO</label><select id="journalScope"><option value="general">General reflection</option><option value="cessation">Cessation log</option><option value="breath">Breath observation log</option><option value="milk">Milk &amp; dairy log</option><option value="both">Cessation + breath (legacy)</option><option value="all">All trackers</option></select>
           <label for="journalTitle">TITLE <span>OPTIONAL</span></label><input id="journalTitle" type="text" maxlength="90" placeholder="A thought worth keeping">
           <label for="journalBody">REFLECTION</label><textarea id="journalBody" rows="5" maxlength="4000" required placeholder="What did you notice? What would you like to remember?"></textarea>
           <div class="journal-form-actions"><button class="button button-red" type="submit" id="journalSave">SAVE REFLECTION <span aria-hidden="true">↗</span></button><button class="journal-cancel hidden" type="button" id="journalCancel">CANCEL EDIT</button></div>
           <p class="journal-form-note">Write for yourself. A difficult day is still worth understanding; a note does not need to be positive to be useful.</p>
         </form>
         <div class="journal-list-wrap">
-          <div class="journal-list-head"><div><span class="insight-label">YOUR REFLECTIONS</span><strong id="journalCount">0 NOTES</strong></div><div class="journal-list-controls"><input id="journalSearch" type="search" aria-label="Search reflections" placeholder="Search notes"><select id="journalFilter" aria-label="Filter reflections"><option value="all">All notes</option><option value="general">General</option><option value="cessation">Cessation</option><option value="breath">Breath</option><option value="both">Both logs</option></select></div></div>
+          <div class="journal-list-head"><div><span class="insight-label">YOUR REFLECTIONS</span><strong id="journalCount">0 NOTES</strong></div><div class="journal-list-controls"><input id="journalSearch" type="search" aria-label="Search reflections" placeholder="Search notes"><select id="journalFilter" aria-label="Filter reflections"><option value="any">All notes</option><option value="general">General</option><option value="cessation">Cessation</option><option value="breath">Breath</option><option value="milk">Milk &amp; dairy</option><option value="both">Cessation + breath (legacy)</option><option value="all">All trackers</option></select></div></div>
           <div id="journalList" class="journal-list" aria-live="polite"><p class="journal-empty">Your reflections will appear here. Start with one thing you noticed.</p></div>
         </div>
       </div>
       <div class="backup-strip">
-        <div class="backup-copy"><span class="insight-label">PORTABILITY / YOUR DATA, YOUR COPY</span><strong>One backup. All your records.</strong><p>Export both field logs, your reflections, and theme preference into one JSON file. Restore it later on this browser or another device.</p></div>
+        <div class="backup-copy"><span class="insight-label">PORTABILITY / YOUR DATA, YOUR COPY</span><strong>One backup. All your records.</strong><p>Export all three field logs, your reflections, and theme preference into one JSON file. Restore it later on this browser or another device.</p></div>
         <div class="backup-actions"><button type="button" class="button button-outline" id="backupExport">EXPORT COMPLETE BACKUP <span aria-hidden="true">↓</span></button><label class="button button-outline backup-import-label" for="backupImport">RESTORE FROM BACKUP <span aria-hidden="true">↗</span></label><input class="sr-only" type="file" id="backupImport" accept="application/json,.json"></div>
         <p class="backup-status" id="backupStatus" role="status">Backup files contain sensitive personal notes. Keep them somewhere private.</p>
       </div>
     </section>
-    <p class="dashboard-disclaimer"><strong>Data boundary.</strong> The dashboard reads the existing <code>sst.fieldlog.v1</code>, <code>sst.breathlog.v1</code>, and private <code>sst.journal.v1</code> browser-storage records. It does not upload them. Use the unified backup below to export all three together. Breath-hold observations are shown for record-keeping only; no duration target, ranking, or training advice is provided.</p>
+    <p class="dashboard-disclaimer"><strong>Data boundary.</strong> The dashboard reads the three tracker stores and private journal records in this browser. It does not upload them. Use the unified backup above to export them together. Breath-hold observations are shown for record-keeping only; no duration target, ranking, or training advice is provided.</p>
   </section>
 
   <section class="ticker" aria-label="Program principles">
