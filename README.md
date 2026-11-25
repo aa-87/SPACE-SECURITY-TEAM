@@ -114,3 +114,10 @@ The dashboard's complete backup is a versioned JSON document (`sst-complete-back
 Restore validates the complete document before writing. The user chooses replacement or merge: replacement overwrites these four local-storage keys; merge deduplicates by record ID and gives imported records precedence on matching IDs. A failed storage write triggers a best-effort rollback. The import control limits files to 5 MB.
 
 Backups are ordinary, unencrypted JSON files. Browser local storage is also not encrypted by this application. Treat both as sensitive personal information and store backup files privately. No account, server upload, or cloud synchronization is involved.
+
+
+## Personal progress timeline
+
+The root dashboard includes a visual Field Chronicle that combines the existing cessation, breath-observation, and private journal records into a chronological view. It adds a 12-month stacked SVG activity chart, descriptive record/day/reflection totals, date-grouped event cards, time-window and field filters, text search, and incremental loading.
+
+The timeline reads (but does not modify) the existing `sst.fieldlog.v1`, `sst.breathlog.v1`, and `sst.journal.v1` local-storage records. Counts describe recorded activity only; they are not health outcomes, streaks, scores, or breath-hold performance goals. The timeline introduces no server endpoint, database, external dependency, or new storage key.
