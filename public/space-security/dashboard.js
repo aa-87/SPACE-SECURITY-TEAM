@@ -5,6 +5,24 @@
   function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function dateLabel(value){var d=new Date(value);return isNaN(d.getTime())?'Date unavailable':d.toLocaleString(undefined,{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}
   function duration(seconds){var n=Number(seconds);if(!Number.isFinite(n)||n<0)return '—';return Math.floor(n/60)+'m '+(n%60).toFixed(1)+'s'}
+  function dayKey(date){var d=new Date(date);if(isNaN(d.getTime()))return '';return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function dayLabel(date){return date.toLocaleDateString(undefined,{weekday:'short'}).slice(0,2)}
+  function renderInsights(c,validBreath){
+    var now=new Date(),days=[],map={},triggers={},cravingValues=[];
+    for(var i=13;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),key=dayKey(d);days.push({date:d,key:key,label:dayLabel(d),cessation:0,breath:0});map[key]=days[days.length-1]}
+    c.forEach(function(e){if(!e||typeof e.when!=='string')return;var dt=new Date(e.when);if(isNaN(dt.getTime()))return;var key=dayKey(dt);if(map[key])map[key].cessation++;if(now-dt<=30*86400000&&now>=dt&&typeof e.trigger==='string'&&e.trigger.trim()){var trigger=e.trigger.trim().replace(/\s+/g,' ');triggers[trigger]=(triggers[trigger]||0)+1}if(now-dt<=14*86400000&&now>=dt&&e.craving!==''&&e.craving!=null&&Number.isFinite(Number(e.craving)))cravingValues.push(Number(e.craving))});
+    validBreath.forEach(function(e){var dt=new Date(e.date),key=dayKey(dt);if(map[key])map[key].breath++});
+    var svg=$('activityChart'),max=Math.max(1,...days.map(function(d){return d.cessation+d.breath})),base=174,plotH=145,left=40,plotW=660,step=plotW/14,barW=22,out='';
+    [0,Math.ceil(max/2),max].filter(function(v,i,a){return a.indexOf(v)===i}).forEach(function(v){var y=base-(v/max)*plotH;out+='<line class="insight-gridline" x1="'+left+'" y1="'+y+'" x2="'+(left+plotW)+'" y2="'+y+'"/><text class="insight-axis-label" x="'+(left-10)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>'});
+    days.forEach(function(d,i){var x=left+i*step+(step-barW)/2,h1=d.cessation/max*plotH,h2=d.breath/max*plotH;out+='<rect class="bar-cessation" x="'+x+'" y="'+(base-h1)+'" width="'+barW+'" height="'+h1+'" rx="2"><title>'+d.label+': '+d.cessation+' cessation entries</title></rect>';out+='<rect class="bar-breath" x="'+x+'" y="'+(base-h1-h2)+'" width="'+barW+'" height="'+h2+'" rx="2"><title>'+d.label+': '+d.breath+' breath observations</title></rect>';if(i%2===0||i===13)out+='<text class="insight-axis-label" x="'+(x+barW/2)+'" y="197" text-anchor="middle">'+d.label+'</text>'});
+    svg.innerHTML=out;
+    var topTriggers=Object.keys(triggers).map(function(k){return {name:k,count:triggers[k]}}).sort(function(a,b){return b.count-a.count||a.name.localeCompare(b.name)}).slice(0,3),host=$('triggerInsights');
+    host.textContent='';
+    if(!topTriggers.length){var empty=document.createElement('p');empty.className='insight-empty';empty.textContent='No trigger details recorded in the last 30 days.';host.appendChild(empty)}
+    else topTriggers.forEach(function(item,index){var row=document.createElement('div');row.className='trigger-row';var rank=document.createElement('span');rank.className='trigger-rank';rank.textContent='0'+(index+1);var name=document.createElement('strong');name.textContent=item.name;var count=document.createElement('small');count.textContent=item.count+' '+(item.count===1?'entry':'entries');row.appendChild(rank);row.appendChild(name);row.appendChild(count);host.appendChild(row)});
+    $('recentCravingAverage').textContent=cravingValues.length?(cravingValues.reduce(function(a,b){return a+b},0)/cravingValues.length).toFixed(1)+'/10':'—';
+    $('recentCravingCount').textContent=cravingValues.length?cravingValues.length+' ratings in the last 14 days':'No recent ratings';
+  }
   function load(){
     var cessation=read('sst.fieldlog.v1',{}),breath=read('sst.breathlog.v1',[]);
     var c=cessation&&Array.isArray(cessation.entries)?cessation.entries:[],b=Array.isArray(breath)?breath:[];
@@ -21,6 +39,7 @@
     $('dashBreakdown').textContent=c.length+' cessation · '+validBreath.length+' breath';
     $('dashCessationEntries').textContent=c.length+' ENTR'+(c.length===1?'Y':'IES');
     $('dashBreathEntries').textContent=validBreath.length+' ENTR'+(validBreath.length===1?'Y':'IES');
+    renderInsights(c,validBreath);
     var events=c.filter(Boolean).map(function(e){var kind=e.type==='cigarette'?'Cigarette entry':e.type==='craving'?'Craving observation':e.type==='blend'?'Tobacco / cannabis entry':e.type==='smokefree'?'Smoke-free milestone':'Cessation note';return {group:'cessation',date:e.when,title:kind,detail:[e.quantity&&e.type==='cigarette'?e.quantity+' cigarette(s)':null,e.craving!==''&&e.craving!=null?'Craving '+e.craving+'/10':null,e.trigger||null,e.notes||null].filter(Boolean).join(' · ')}}).concat(validBreath.map(function(e){return {group:'breath',date:e.date,title:'Breath observation · '+duration(e.seconds),detail:[e.context||null,e.notes||null].filter(Boolean).join(' · ')}})).filter(function(e){return typeof e.date==='string'&&!isNaN(new Date(e.date).getTime())}).sort(function(a,z){return new Date(z.date)-new Date(a.date)});
     window.__sstDashboardEvents=events;
     render();
