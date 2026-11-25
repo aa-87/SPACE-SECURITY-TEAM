@@ -145,3 +145,19 @@ The dashboard contains a private reflection journal in `public/space-security/jo
 The versioned `sst-complete-backup-v1` JSON export includes the entire `sst.fieldlog.v1` object (including profile/baseline), the `sst.breathlog.v1` array, `sst.journal.v1`, and the shared theme preference. Restore validates all datasets first and offers replacement or merge; merge deduplicates by ID and imported records take precedence. A failed write attempts rollback. Files over 5 MB are rejected.
 
 **Privacy:** exports are ordinary unencrypted JSON, and this app does not encrypt browser local storage. Keep backup files and access to the browser profile private. Data is not uploaded or synchronized.
+
+
+## Personal progress timeline
+
+The root dashboard now includes a visual Field Chronicle. The timeline reads the existing local records from `sst.fieldlog.v1`, `sst.breathlog.v1`, and `sst.journal.v1`; it does not write to or migrate those records.
+
+The experience includes:
+- A twelve-month stacked SVG chart of monthly cessation, breath-observation, and journal entry counts.
+- Descriptive totals: number of records, distinct calendar days with records, journal reflections, and date of the first record.
+- A chronological, date-grouped feed with local timestamps and the context already present in each record.
+- Time-window filters (30 days, 90 days, 12 months, all records), field filters, and text search.
+- Incremental pagination in groups of twelve records.
+
+Counts represent saved observations, not a health outcome, streak, adherence score, or performance measure. Breath observations remain retrospective records; the timeline introduces no timer, target, ranking, or coaching. The chart always reflects the most recent twelve calendar months, while the chronological feed follows the selected time window.
+
+The timeline is rendered client-side with inline SVG and framework-free JavaScript. It adds no external dependency, server endpoint, or storage key. It follows the existing dark/light theme and responsive layout.
