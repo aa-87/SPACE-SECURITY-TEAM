@@ -88,3 +88,13 @@ The dashboard is a read-only view: it does not rewrite, merge, transmit, or migr
 
 The dashboard and both trackers share the `sst.landing.theme` preference for light/dark mode. Existing tracker data formats and storage keys remain unchanged. Because browser local storage is scoped to the exact origin, records created on a different domain, subdomain, protocol, or browser profile will not automatically appear here. Export/import remains the way to move backups between environments.
 
+
+## Personal insights
+
+The unified dashboard also provides descriptive, local-only insights:
+
+- A rolling 14-day stacked activity chart showing how many cessation and breath-log records were entered on each day.
+- The three most frequently entered cessation trigger labels over the previous 30 days. Labels are grouped without regard to capitalization.
+- The average of recorded craving ratings from the previous 14 days.
+
+These summaries are generated in the browser from existing local records. They do not infer causation, treatment effectiveness, health status, or breath-hold performance. Empty periods are shown as empty rather than interpreted as a lack of progress. No data is uploaded.
