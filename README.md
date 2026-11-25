@@ -98,3 +98,19 @@ The unified dashboard also provides descriptive, local-only insights:
 - The average of recorded craving ratings from the previous 14 days.
 
 These summaries are generated in the browser from existing local records. They do not infer causation, treatment effectiveness, health status, or breath-hold performance. Empty periods are shown as empty rather than interpreted as a lack of progress. No data is uploaded.
+
+
+## Private journal and complete backup
+
+The root dashboard includes a local-only reflection journal stored under `sst.journal.v1`. Notes can be tagged as general, cessation-related, breath-log-related, or connected to both logs. They can be searched, filtered, edited, and deleted. Journal records also appear in the combined recent-activity feed.
+
+The dashboard's complete backup is a versioned JSON document (`sst-complete-backup-v1`) containing:
+
+- The complete cessation field-log object, including its profile/baseline.
+- Breath observation records.
+- Journal reflections.
+- The light/dark theme preference.
+
+Restore validates the complete document before writing. The user chooses replacement or merge: replacement overwrites these four local-storage keys; merge deduplicates by record ID and gives imported records precedence on matching IDs. A failed storage write triggers a best-effort rollback. The import control limits files to 5 MB.
+
+Backups are ordinary, unencrypted JSON files. Browser local storage is also not encrypted by this application. Treat both as sensitive personal information and store backup files privately. No account, server upload, or cloud synchronization is involved.
