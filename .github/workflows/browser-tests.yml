@@ -21,6 +21,7 @@ jobs:
       - run: node tests/local-data.test.js
       - run: node tests/academy-model.test.cjs
       - run: node tests/construction-model.test.cjs
+      - run: node tests/string-model.test.cjs
       - run: npm install --no-save --no-package-lock @playwright/test@1.51.1
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
