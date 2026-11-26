@@ -1,0 +1,29 @@
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),lessons=window.SSTLessons,K='sst.academy.progress.v1';
+let progress=[],available=true;
+function read(){try{const raw=localStorage.getItem(K),v=raw===null?[]:JSON.parse(raw);if(!Array.isArray(v)||v.some(id=>!lessons.some(l=>l.id===id)))throw Error('Invalid progress');progress=[...new Set(v)];available=true}catch(e){available=false;$('academyStorageStatus').textContent='Learning progress unavailable. Lessons remain accessible; changes will not be saved.'}}
+function save(next){if(!available)return false;try{localStorage.setItem(K,JSON.stringify(next));progress=next;return true}catch(e){$('academyStorageStatus').textContent='Could not save learning progress.';return false}}
+function update(){ $('academyProgressText').textContent=progress.length+' of '+lessons.length+' lessons completed';$('academyProgressBar').value=progress.length;const next=lessons.find(l=>!progress.includes(l.id));$('academyBegin').href=next?'/learn/lesson/'+next.id:'/learn/lesson/01';$('academyBegin').textContent=progress.length?(next?'Continue learning →':'Review lessons →'):'Begin learning →';}
+function node(tag,value,cls){const n=document.createElement(tag);if(value!=null)n.textContent=value;if(cls)n.className=cls;return n}
+function cards(){const host=$('academyLessons');host.replaceChildren();lessons.forEach(l=>{const a=node('a',null,'academy-card');a.href='/learn/lesson/'+l.id;a.append(node('span','LESSON '+l.id+' / '+l.minutes+' MIN','academy-kicker'),node('h3',l.title),node('p',l.goal),node('span',progress.includes(l.id)?'Completed ✓':'Start lesson →','academy-card-status'));host.append(a)})}
+read();update();cards();
+const path=location.pathname.replace(/\/$/,'');const match=path.match(/^\/learn\/lesson\/(\d\d)$/),lesson=match&&lessons.find(l=>l.id===match[1]);
+if(path==='/learn/reference'){$('academyHero').hidden=true;$('academyHome').hidden=true;$('academyReference').hidden=false;document.title='YottaDB setup — MUMPS Academy'}
+else if(lesson){
+$('academyHero').hidden=true;$('academyHome').hidden=true;$('academyLesson').hidden=false;document.title=lesson.title+' — MUMPS Academy';
+$('lessonMeta').textContent='FOUNDATIONS / LESSON '+lesson.id+' / '+lesson.minutes+' MIN / STANDARD MUMPS';
+$('lessonTitle').textContent=lesson.title;$('lessonGoal').textContent=lesson.goal;$('lessonIntro').textContent=lesson.intro;$('lessonPractice').textContent=lesson.practice;$('lessonTask').textContent=lesson.task;$('lessonReference').href='https://docs.yottadb.com/ProgrammersGuide/'+lesson.reference;
+let step=-1,correct=false;const pre=$('lessonCode');
+function render(){const f=lesson.frames[step];pre.replaceChildren();lesson.code.forEach((line,i)=>{const span=node('span',line,'academy-code-line');if(f&&f.line===i)span.classList.add('active');pre.append(span)});$('traceExplanation').textContent=f?f.explain:'Select Next instruction to begin.';$('traceOutput').textContent=f?f.output:'';const mem=$('traceMemory');mem.replaceChildren();const values=Object.entries(f?f.memory:{});if(!values.length)mem.append(node('p','No values shown.','academy-muted'));values.forEach(([k,v])=>{const item=node('div',null,'academy-variable');item.append(node('small',k),node('strong',typeof v==='string'?JSON.stringify(v):String(v)));mem.append(item)});$('traceNext').disabled=step===lesson.frames.length-1;$('completeLesson').disabled=!correct||step!==lesson.frames.length-1||progress.includes(lesson.id)||!available;$('completeLesson').textContent=progress.includes(lesson.id)?'Completed ✓':'Mark lesson complete'}
+$('traceNext').onclick=()=>{if(step<lesson.frames.length-1)step++;render()};$('traceReset').onclick=()=>{step=-1;render()};
+$('copyCode').onclick=async()=>{try{await navigator.clipboard.writeText(lesson.code.join('\n'));$('copyCode').textContent='Copied'}catch(e){$('copyCode').textContent='Select code to copy'}};
+$('quizQuestion').textContent=lesson.question;lesson.choices.forEach((choice,i)=>{const b=node('button',choice,'academy-choice');b.type='button';b.setAttribute('aria-pressed','false');b.onclick=()=>{correct=i===lesson.answer;Array.from($('quizChoices').children).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));$('quizFeedback').textContent=correct?'Correct! '+lesson.why:'Not quite. Review the example and try again.';render()};$('quizChoices').append(b)});
+$('completeLesson').onclick=()=>{read();if(correct&&step===lesson.frames.length-1&&save([...new Set(progress.concat(lesson.id))])){update();render();$('quizFeedback').textContent='Lesson completed. Continue whenever you are ready.'}};
+const i=lessons.indexOf(lesson);$('previousLesson').href=i?'/learn/lesson/'+lessons[i-1].id:'/learn';$('nextLesson').href=i<lessons.length-1?'/learn/lesson/'+lessons[i+1].id:'/learn';if(i===lessons.length-1)$('nextLesson').textContent='Return to foundations →';
+if(i===0){$('messageBuilder').hidden=false;const preview=()=>$('messageCode').textContent='WRITE "'+$('messageInput').value.replace(/"/g,'""')+'",!';$('messageInput').addEventListener('input',preview);$('messageRun').onclick=()=>$('messageOutput').textContent=$('messageInput').value+'\n';preview()}
+render();
+}
+$('resetProgress').onclick=()=>{if(confirm('Reset academy completion history only? Your trackers and journal will not change.')&&save([])){location.reload()}};
+window.addEventListener('storage',e=>{if(!e.key||e.key===K){read();update();cards();if(lesson){$('completeLesson').disabled=true;$('completeLesson').textContent=progress.includes(lesson.id)?'Completed ✓':'Reload to update progress'}}});
+})();
