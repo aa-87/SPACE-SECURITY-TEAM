@@ -18,6 +18,7 @@ mkdir -p "$MIO_ROOT/templates/layouts" "$MIO_ROOT/templates/pages" \
 cp -a "$SOURCE_ROOT/routines/SPACETEAM.m" "$MIO_ROOT/routines/"
 cp -a "$SOURCE_ROOT/templates/layouts/space_security_layout.html" "$MIO_ROOT/templates/layouts/"
 cp -a "$SOURCE_ROOT/templates/pages/space_security_home.html" "$MIO_ROOT/templates/pages/"
+cp -a "$SOURCE_ROOT/templates/pages/space_security_academy.html" "$MIO_ROOT/templates/pages/"
 cp -a "$SOURCE_ROOT/public/space-security/." "$MIO_ROOT/public/space-security/"
 cp -a "$SOURCE_ROOT/docs/SPACE_SECURITY_LANDING_PAGE.md" "$MIO_ROOT/docs/"
 cp -a "$SOURCE_ROOT/docs/FIELD_LOG_001.md" "$MIO_ROOT/docs/"
