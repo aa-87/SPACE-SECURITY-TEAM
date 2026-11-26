@@ -244,10 +244,10 @@ Report reproducible issues with the browser, viewport, commit and synthetic step
 No standalone LICENSE file was found during the repository review. Do not assume a public repository grants permission to redistribute or modify its code. Existing source notices remain unchanged; licensing terms should be established by the repository owner before a wider release.
 
 
-## MUMPS Academy — Foundations 0.4
+## MUMPS Academy — Foundations 0.5
 
-Open `/learn` for forty beginner-first lessons, from output and variables through hierarchical information, routines, parameters, string manipulation, pattern matching and a record formatter project. Eight visual laboratories are available at `/learn/lab`: trees, expressions, flow, memory, routines, construction, strings and patterns. The searchable `/learn/reference` catalog connects standard MUMPS constructs to lessons, visual labs and technical documentation, with YottaDB environment entries separately identified.
+Open `/learn` for fifty beginner-first lessons and ten visual laboratories. The final module teaches data modeling, CRUD, validation, separation of responsibilities, cooperative locking, transactions and testing, culminating in a downloadable MUMPS terminal journal. The searchable reference includes thirty entries. Standard constructs are taught first, with YottaDB environment and transaction behavior identified explicitly.
 
-The models are deliberately constrained teaching demonstrations, not a general M interpreter. The string lab uses printable ASCII, bounded positive positions and nonempty delimiters/search terms. Learning progress remains under `sst.academy.progress.v1`; lesson IDs 01–30 are unchanged. Labs do not modify tracker data or a real database.
+The browser laboratories are bounded simulations, not interpreters. Fictional journal records remain in memory and never access personal tracker data. Learning progress retains `sst.academy.progress.v1` and lesson IDs 01–40. No production dependency or personal storage changes.
 
-Run `node tests/academy-model.test.cjs`, `node tests/construction-model.test.cjs`, `node tests/string-model.test.cjs` and the existing Playwright suite. An opt-in YottaDB verification harness is available for a disposable learning database. See [Foundations 0.4](docs/ACADEMY_FOUNDATIONS_0_4.md) for scope and verification instructions.
+See [Foundations 0.5](docs/ACADEMY_FOUNDATIONS_0_5.md) for verification, deployment and disposable YottaDB project instructions.
