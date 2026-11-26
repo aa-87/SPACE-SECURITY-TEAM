@@ -242,3 +242,10 @@ Keep the root URL, shared Trackers dropdown, dark/light theme, local data contra
 Report reproducible issues with the browser, viewport, commit and synthetic steps to reproduce in [GitHub Issues](https://github.com/aa-87/SPACE-SECURITY-TEAM/issues). Never include personal tracker data.
 
 No standalone LICENSE file was found during the repository review. Do not assume a public repository grants permission to redistribute or modify its code. Existing source notices remain unchanged; licensing terms should be established by the repository owner before a wider release.
+
+
+## MUMPS Academy — Foundations 0.1
+
+Open `/learn` for ten beginner-first lessons. Guided instruction traces, memory diagrams, quizzes and progress tracking require no installation or account. Examples use standard MUMPS constructs with YottaDB as the implementation of choice. The browser demonstrations are prepared traces, not a runtime. `/learn/reference` explains local YottaDB execution. Learning progress is stored separately under `sst.academy.progress.v1`; personal backups do not include it. No arbitrary code execution endpoint is provided.
+
+Academy routes are registered by `REG^SPACETEAM`; after syncing, restart/recompile the host route table. Browser coverage lives in `tests/browser/academy.spec.cjs`. Actual YottaDB example verification and live browser acceptance remain required before declaring the curriculum certified.
