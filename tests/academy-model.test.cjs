@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict');
+const M=require('../public/space-security/academy/lab-model.js');
+const lessons=require('../public/space-security/academy/curriculum.js');
+assert.equal(lessons.length,20);
+lessons.forEach((l,i)=>{assert.equal(l.id,String(i+1).padStart(2,'0'));assert.ok(l.answer>=0&&l.answer<l.choices.length);assert.ok(l.frames.length);l.frames.forEach(f=>assert.ok(f.line>=0&&f.line<l.code.length))});
+const t=new M.Tree();
+assert.equal(t.data([]),0);t.set(['Alex','city'],'Boston');assert.equal(t.data(['Alex']),10);assert.equal(t.data(['Alex','city']),1);t.set(['Alex'],'');assert.equal(t.data(['Alex']),11);assert.equal(t.get(['Alex'],'fallback'),'');assert.equal(t.get(['missing'],'fallback'),'fallback');assert.equal(t.data(['missing']),0);
+t.set(['Sam','city'],'Chicago');assert.equal(t.order([],''),'Alex');assert.equal(t.order([],'Alex'),'Sam');assert.equal(t.order([],'Sam'),'');t.kill(['Alex']);assert.equal(t.data(['Alex']),0);assert.equal(t.get(['Sam','city']),'Chicago');t.kill([]);assert.equal(t.data([]),0);
+assert.equal(M.quote('A "quote"'),'"A ""quote"""');assert.equal(M.expression(2,3,4,false).result,20);assert.equal(M.expression(2,3,4,true).result,14);assert.throws(()=>M.expression(-1,3,4,false));assert.throws(()=>M.expression(2,3.5,4,true));assert.equal(M.decision(10).test,0);assert.equal(M.decision(11).test,1);
+const m=new M.Memory();m.local='L';m.global='G';m.restart();assert.equal(m.local,undefined);assert.equal(m.global,'G');m.reset();assert.equal(m.global,undefined);
+console.log('Academy curriculum and visual model tests passed');
