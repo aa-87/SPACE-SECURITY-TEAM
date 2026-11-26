@@ -37,5 +37,5 @@ const entries=[
 ];
 function el(tag,text,parent,cls){const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;parent.append(n);return n}
 function render(){const q=search.value.trim().toLowerCase(),c=category.value;host.replaceChildren();const matches=entries.filter(e=>(c==='all'||e[1]===c)&&e.slice(0,4).join(' ').toLowerCase().includes(q));status.textContent=matches.length+' of '+entries.length+' entries';for(const [name,type,desc,code,lesson,lab,ref] of matches){const card=el('article','',host,'reference-card');el('span',type,card,'academy-kicker');el('h3',name,card);el('p',desc,card);el('pre',code,card);const links=el('div','',card,'lab-actions');const a=el('a','Lesson '+String(lesson).padStart(2,'0'),links);a.href='/learn/lesson/'+String(lesson).padStart(2,'0');if(lab){const b=el('a','Visual lab',links);b.href='/learn/lab/'+lab}if(ref){const b=el('a','Technical documentation',links);b.href='https://docs.yottadb.com/ProgrammersGuide/'+ref}}if(!matches.length)el('p','No matching entries. Try a shorter search or change category.',host)}
-search.addEventListener('input',render);category.addEventListener('change',render);render();
+search.value=new URLSearchParams(location.search).get('q')||'';search.addEventListener('input',render);category.addEventListener('change',render);render();
 })();
