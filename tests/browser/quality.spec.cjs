@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 const base='/public/space-security/';
-const routes=['/','/?demo=1',base+'tracker/index.html',base+'breath-log/index.html',base+'milk-log/index.html','/learn','/learn/reference','/learn/lesson/17','/learn/lesson/30','/learn/lesson/40',...['trees','expressions','flow','memory','routines','construction','strings','patterns'].map(x=>'/learn/lab/'+x)];
+const routes=['/','/?demo=1',base+'tracker/index.html',base+'breath-log/index.html',base+'milk-log/index.html','/learn','/learn/reference','/learn/lesson/17','/learn/lesson/30','/learn/lesson/40','/learn/lesson/50',...['trees','expressions','flow','memory','routines','construction','strings','patterns','application','reliability'].map(x=>'/learn/lab/'+x)];
 for(const width of [320,375,430,768]){
  test('quality reflow and attribution at '+width+'px',async({page})=>{
   test.setTimeout(120000);
