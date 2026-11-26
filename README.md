@@ -4,9 +4,9 @@
 
 A privacy-first personal observation workspace built on [MUMPS.IO](https://github.com/aa-87/mumps.io), YottaDB/GT.M and the MIOTPL server-side templating engine. Three specialized trackers, one private journal, and a shared dashboard help users record and revisit personal experiences without accounts, cloud synchronization, or gamification.
 
-[Live project — efuhair.com](https://efuhair.com/) · [Sample dashboard](https://efuhair.com/?demo=1) · [Technical documentation](docs/SPACE_SECURITY_LANDING_PAGE.md) · [Browser CI](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions/workflows/browser-tests.yml)
+[Live project — efuhair.com](https://efuhair.com/) · [Sample dashboard](https://efuhair.com/?demo=1) · [Technical documentation](docs/SPACE_SECURITY_LANDING_PAGE.md) · [Browser CI](https://github.com/aa-87/efuhair.com/actions/workflows/browser-tests.yml)
 
-[![Browser regression](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions/workflows/browser-tests.yml/badge.svg)](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions/workflows/browser-tests.yml)
+[![Browser regression](https://github.com/aa-87/efuhair.com/actions/workflows/browser-tests.yml/badge.svg)](https://github.com/aa-87/efuhair.com/actions/workflows/browser-tests.yml)
 
 **Status:** v0.1.0 release candidate. The live codename deployment may lag behind repository changes. The CI badge reports automated fixture tests, not certification of the live MUMPS server.
 
@@ -70,7 +70,7 @@ The server renders the root page and serves static files. Personal records are p
 ## Repository structure
 
 ```text
-SPACE-SECURITY-TEAM/
+efuhair.com/
 ├── .github/workflows/browser-tests.yml
 ├── .gitignore
 ├── README.md
@@ -122,8 +122,8 @@ For a fresh sibling-directory installation:
 
 ```bash
 git clone https://github.com/aa-87/mumps.io.git
-git clone https://github.com/aa-87/SPACE-SECURITY-TEAM.git
-cd SPACE-SECURITY-TEAM
+git clone https://github.com/aa-87/efuhair.com.git
+cd efuhair.com
 ```
 
 Set up the MUMPS.IO environment according to its own documentation first. If both repositories already exist, do not clone them again.
@@ -211,7 +211,7 @@ The fixture combines the actual MIOTPL layout and page using simple placeholder 
 
 GitHub Actions runs the data and browser suites on pushes, pull requests and manual dispatch. The workflow uses Node.js 24-compatible action runtimes while installing Node.js 22 for test commands. Failed browser-test artifacts are uploaded for diagnosis. Use synthetic records only in tests, traces and screenshots.
 
-Review [CI results](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions) and the [browser acceptance checklist](docs/STABILIZATION_CHECKPOINT.md) before promoting a release. Test the actual deployed MUMPS application separately.
+Review [CI results](https://github.com/aa-87/efuhair.com/actions) and the [browser acceptance checklist](docs/STABILIZATION_CHECKPOINT.md) before promoting a release. Test the actual deployed MUMPS application separately.
 
 ## Privacy and safety
 
@@ -227,9 +227,9 @@ Review [CI results](https://github.com/aa-87/SPACE-SECURITY-TEAM/actions) and th
 
 | Checkpoint | Purpose |
 | --- | --- |
-| [Pre-stabilization](https://github.com/aa-87/SPACE-SECURITY-TEAM/tree/checkpoint/pre-stabilization-2026-11-25) | Recovery before data-integrity changes |
-| [Stabilization](https://github.com/aa-87/SPACE-SECURITY-TEAM/tree/checkpoint/stabilization-2026-11-25) | Shared validation and tracker editing |
-| [v0.1.0-rc1](https://github.com/aa-87/SPACE-SECURITY-TEAM/tree/checkpoint/v0.1.0-rc1) | Dashboard-first UX, demo and automated browser suite |
+| [Pre-stabilization](https://github.com/aa-87/efuhair.com/tree/checkpoint/pre-stabilization-2026-11-25) | Recovery before data-integrity changes |
+| [Stabilization](https://github.com/aa-87/efuhair.com/tree/checkpoint/stabilization-2026-11-25) | Shared validation and tracker editing |
+| [v0.1.0-rc1](https://github.com/aa-87/efuhair.com/tree/checkpoint/v0.1.0-rc1) | Dashboard-first UX, demo and automated browser suite |
 
 Current priority: repository hygiene, passing CI, live desktop/mobile acceptance, and a verified v0.1.0 release. Future work includes private beta feedback, stronger offline reload support, encrypted backup options, and descriptive historical comparisons. These are planned, not current features.
 
@@ -239,7 +239,7 @@ See [release candidate notes](docs/RELEASE_CANDIDATE_0_1_0.md) and [stabilizatio
 
 Keep the root URL, shared Trackers dropdown, dark/light theme, local data contracts and MUMPS.IO static configuration intact. Prefer framework-free browser code, reuse shared assets, and update tests and documentation whenever changing persistence or record schemas. Do not commit real personal records, exported backups, credentials or generated test artifacts.
 
-Report reproducible issues with the browser, viewport, commit and synthetic steps to reproduce in [GitHub Issues](https://github.com/aa-87/SPACE-SECURITY-TEAM/issues). Never include personal tracker data.
+Report reproducible issues with the browser, viewport, commit and synthetic steps to reproduce in [GitHub Issues](https://github.com/aa-87/efuhair.com/issues). Never include personal tracker data.
 
 No standalone LICENSE file was found during the repository review. Do not assume a public repository grants permission to redistribute or modify its code. Existing source notices remain unchanged; licensing terms should be established by the repository owner before a wider release.
 
