@@ -2390,5 +2390,578 @@
     "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
     "reference": "functions.html",
     "id": "40"
+  },
+  {
+    "title": "Design a record",
+    "topic": "Data modeling",
+    "goal": "Choose an identifier and separate fields.",
+    "intro": "A record groups related facts. Use a stable identifier rather than a title as the key; titles can change. Separate fields let you retrieve or update one fact without parsing the others.",
+    "code": [
+      "SET journal(\"J001\",\"title\")=\"A walk\"",
+      "SET journal(\"J001\",\"body\")=\"Noticed the trees\"",
+      "WRITE journal(\"J001\",\"title\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk"
+        },
+        "output": "",
+        "explain": "Create the title field."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk",
+          "journal(\"J001\",\"body\")": "Noticed the trees"
+        },
+        "output": "",
+        "explain": "Add a separate body field."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk",
+          "journal(\"J001\",\"body\")": "Noticed the trees"
+        },
+        "output": "A walk\n",
+        "explain": "Retrieve only the title."
+      }
+    ],
+    "question": "Which value should remain stable when a title changes?",
+    "choices": [
+      "Record identifier",
+      "Title",
+      "Body"
+    ],
+    "answer": 0,
+    "why": "The identifier locates the record independently of its contents.",
+    "task": "Sketch two records with separate fields.",
+    "lab": "application",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "41"
+  },
+  {
+    "title": "Create a record safely",
+    "topic": "Create",
+    "goal": "Check existence before assigning fields.",
+    "intro": "Create should not silently overwrite an existing record. $DATA detects a node or descendants. This local example demonstrates the rule in one process; concurrent database writers need coordinated locking or transactions.",
+    "code": [
+      "SET journal(\"J001\",\"title\")=\"Original\"",
+      "IF $DATA(journal(\"J001\")) WRITE \"Already exists\",!",
+      "ELSE  SET journal(\"J001\",\"title\")=\"New\"",
+      "WRITE journal(\"J001\",\"title\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "journal(\"J001\",\"title\")": "Original"
+        },
+        "output": "",
+        "explain": "A record already exists."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "journal(\"J001\",\"title\")": "Original"
+        },
+        "output": "Already exists\n",
+        "explain": "The branch has descendants."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "journal(\"J001\",\"title\")": "Original"
+        },
+        "output": "Already exists\n",
+        "explain": "ELSE is skipped."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "journal(\"J001\",\"title\")": "Original"
+        },
+        "output": "Already exists\nOriginal\n",
+        "explain": "The original is preserved."
+      }
+    ],
+    "question": "What should create do if the identifier already exists?",
+    "choices": [
+      "Overwrite it",
+      "Report a conflict",
+      "Delete it"
+    ],
+    "answer": 1,
+    "why": "Create and update have different contracts.",
+    "task": "Try a duplicate ID in the application lab.",
+    "lab": "application",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "42"
+  },
+  {
+    "title": "Retrieve a record",
+    "topic": "Read",
+    "goal": "Handle missing records explicitly.",
+    "intro": "A lookup should distinguish missing records from existing records with empty fields. $DATA checks the record branch, and $GET reads a field safely.",
+    "code": [
+      "SET journal(\"J001\",\"title\")=\"A walk\"",
+      "WRITE $DATA(journal(\"J002\")),!",
+      "WRITE $GET(journal(\"J002\",\"title\"),\"Missing\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk"
+        },
+        "output": "",
+        "explain": "Only J001 exists."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk"
+        },
+        "output": "0\n",
+        "explain": "J002 is missing."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk"
+        },
+        "output": "0\nMissing\n",
+        "explain": "Use the fallback."
+      }
+    ],
+    "question": "Does $GET create the missing title?",
+    "choices": [
+      "Yes",
+      "No",
+      "Only for globals"
+    ],
+    "answer": 1,
+    "why": "Reading a fallback does not write data.",
+    "task": "Look up a nonexistent ID.",
+    "lab": "application",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "43"
+  },
+  {
+    "title": "Update and delete deliberately",
+    "topic": "Update / Delete",
+    "goal": "Change a field and remove a chosen record.",
+    "intro": "Update requires an existing identifier. KILL removes the selected branch and descendants. A sibling record remains intact. In a real application confirm destructive operations.",
+    "code": [
+      "SET journal(\"J001\",\"title\")=\"Old\",journal(\"J002\",\"title\")=\"Keep\"",
+      "SET journal(\"J001\",\"title\")=\"Updated\"",
+      "KILL journal(\"J001\")",
+      "WRITE $GET(journal(\"J001\",\"title\"),\"Missing\"),!,journal(\"J002\",\"title\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "journal(\"J001\",\"title\")": "Old",
+          "journal(\"J002\",\"title\")": "Keep"
+        },
+        "output": "",
+        "explain": "Create two records."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "journal(\"J001\",\"title\")": "Updated",
+          "journal(\"J002\",\"title\")": "Keep"
+        },
+        "output": "",
+        "explain": "Update the first title."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "journal(\"J002\",\"title\")": "Keep"
+        },
+        "output": "",
+        "explain": "Remove only J001."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "journal(\"J002\",\"title\")": "Keep"
+        },
+        "output": "Missing\nKeep\n",
+        "explain": "Verify both outcomes."
+      }
+    ],
+    "question": "Which branch remains after KILL journal(\"J001\")?",
+    "choices": [
+      "J001",
+      "J002",
+      "Neither"
+    ],
+    "answer": 1,
+    "why": "Only the selected subtree is removed.",
+    "task": "Update then delete a fictional entry.",
+    "lab": "application",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "44"
+  },
+  {
+    "title": "Validate before writing",
+    "topic": "Validation",
+    "goal": "Reject malformed input before changing storage.",
+    "intro": "Define a contract: identifiers use J followed by three digits. Validate before writing. The full project also limits title and body length and excludes its output delimiter.",
+    "code": [
+      "SET id=\"J01\",title=\"A walk\"",
+      "IF id'?1\"J\"3N WRITE \"Invalid ID\",!",
+      "ELSE  SET journal(id,\"title\")=title",
+      "WRITE $DATA(journal),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "id": "J01",
+          "title": "A walk"
+        },
+        "output": "",
+        "explain": "The identifier has only two digits."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "id": "J01",
+          "title": "A walk"
+        },
+        "output": "Invalid ID\n",
+        "explain": "Reject the malformed ID."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "id": "J01",
+          "title": "A walk"
+        },
+        "output": "Invalid ID\n",
+        "explain": "No assignment takes place."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "id": "J01",
+          "title": "A walk"
+        },
+        "output": "Invalid ID\n0\n",
+        "explain": "The tree is unchanged."
+      }
+    ],
+    "question": "When should validation happen?",
+    "choices": [
+      "After writing",
+      "Before writing",
+      "Only during deletion"
+    ],
+    "answer": 1,
+    "why": "Reject invalid input without mutation.",
+    "task": "Try J001 and J01 in the lab.",
+    "lab": "application",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "45"
+  },
+  {
+    "title": "Separate responsibilities",
+    "topic": "Application structure",
+    "goal": "Separate validation, storage and presentation.",
+    "intro": "A routine can delegate work to smaller named entry points. The caller decides how to display a returned result. Save as SSTLAYERS.m.",
+    "code": [
+      "SSTLAYERS",
+      " SET title=\"A walk\"",
+      " WRITE $$valid(title),!",
+      " QUIT",
+      "valid(title)",
+      " IF title=\"\" QUIT \"Invalid title\"",
+      " QUIT \"OK\""
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "title": "A walk"
+        },
+        "output": "",
+        "explain": "Collect the input."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "title": "A walk"
+        },
+        "output": "",
+        "explain": "Call validation."
+      },
+      {
+        "line": 5,
+        "memory": {
+          "title": "A walk"
+        },
+        "output": "",
+        "explain": "The title is not empty."
+      },
+      {
+        "line": 6,
+        "memory": {},
+        "output": "",
+        "explain": "Return OK."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "title": "A walk"
+        },
+        "output": "OK\n",
+        "explain": "Presentation displays the result."
+      }
+    ],
+    "question": "Why return a status instead of displaying it inside validation?",
+    "choices": [
+      "The caller can choose how to present it",
+      "It creates a global",
+      "It removes the need for validation"
+    ],
+    "answer": 0,
+    "why": "Separate responsibilities make functions reusable.",
+    "task": "Add a length check.",
+    "lab": "application",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "46"
+  },
+  {
+    "title": "Coordinate competing processes",
+    "topic": "LOCK",
+    "goal": "Understand cooperative locking and timeout.",
+    "intro": "LOCK coordinates processes that follow the same convention; it does not automatically prevent data access. Incremental LOCK +name:timeout attempts acquisition, and $TEST reports success for the timed form. Release an acquired lock with LOCK -name. The example assumes no competing holder. Save as SSTLOCK.m.",
+    "code": [
+      "SSTLOCK",
+      " LOCK +^SSTLearn(\"lesson47\"):1",
+      " IF $TEST WRITE \"Acquired\",! LOCK -^SSTLearn(\"lesson47\")",
+      " ELSE  WRITE \"Busy\",!",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "$TEST": 1
+        },
+        "output": "",
+        "explain": "Assume the lock is available."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "$TEST": 1
+        },
+        "output": "Acquired\n",
+        "explain": "Display success and release the lock."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "$TEST": 1
+        },
+        "output": "Acquired\n",
+        "explain": "Skip the alternative."
+      }
+    ],
+    "question": "Does LOCK prevent a process that ignores the convention from writing?",
+    "choices": [
+      "Yes",
+      "No",
+      "Only for local variables"
+    ],
+    "answer": 1,
+    "why": "Locks coordinate cooperating processes.",
+    "task": "Explore the two-process lock simulation.",
+    "lab": "reliability",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "commands.html#lock",
+    "id": "47"
+  },
+  {
+    "title": "Commit related changes together",
+    "topic": "Transactions",
+    "goal": "Understand commit and rollback.",
+    "intro": "YottaDB transaction processing groups database changes. TSTART begins a transaction, TCOMMIT commits it and TROLLBACK discards uncommitted database changes. TSTART () is a YottaDB-supported restart form; restart rules are beyond this exercise. Use a disposable learning database. Save as SSTTX.m.",
+    "code": [
+      "SSTTX",
+      " TSTART ()",
+      " SET ^SSTLearn(\"lesson48\",\"title\")=\"A walk\"",
+      " SET ^SSTLearn(\"lesson48\",\"body\")=\"Trees\"",
+      " TROLLBACK",
+      " WRITE \"Rolled back\",!",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {},
+        "output": "",
+        "explain": "Begin the transaction."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "pending title": "A walk"
+        },
+        "output": "",
+        "explain": "Stage the title change."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "pending title": "A walk",
+          "pending body": "Trees"
+        },
+        "output": "",
+        "explain": "Stage the related body."
+      },
+      {
+        "line": 4,
+        "memory": {},
+        "output": "",
+        "explain": "Discard uncommitted changes; existing data is retained."
+      },
+      {
+        "line": 5,
+        "memory": {},
+        "output": "Rolled back\n",
+        "explain": "Report the rollback."
+      }
+    ],
+    "question": "What happens to uncommitted database changes after TROLLBACK?",
+    "choices": [
+      "They become permanent",
+      "They are discarded",
+      "They become local variables"
+    ],
+    "answer": 1,
+    "why": "Rollback discards the transaction's database changes.",
+    "task": "Compare commit and rollback.",
+    "lab": "reliability",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "commands.html",
+    "id": "48"
+  },
+  {
+    "title": "Test a contract",
+    "topic": "Testing",
+    "goal": "Compare expected and observed outcomes.",
+    "intro": "A test supplies a known input and checks the result. Include valid input, boundary cases and rejected input. Save as SSTCHECK.m.",
+    "code": [
+      "SSTCHECK",
+      " WRITE $$valid(\"J001\")=1,!",
+      " WRITE $$valid(\"J01\")=0,!",
+      " QUIT",
+      "valid(id)",
+      " QUIT id?1\"J\"3N"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {},
+        "output": "1\n",
+        "explain": "The valid identifier produces true."
+      },
+      {
+        "line": 2,
+        "memory": {},
+        "output": "1\n1\n",
+        "explain": "The invalid identifier is correctly rejected."
+      }
+    ],
+    "question": "What does 1 in the second output mean?",
+    "choices": [
+      "The invalid ID was accepted",
+      "The rejection matched the expectation",
+      "The test was skipped"
+    ],
+    "answer": 1,
+    "why": "A test can pass by correctly rejecting invalid input.",
+    "task": "Add a test for a lowercase j.",
+    "lab": "reliability",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "49"
+  },
+  {
+    "title": "Build a persistent journal",
+    "topic": "Project",
+    "goal": "Combine CRUD, validation and a persistent data model.",
+    "intro": "The downloadable SSTJOURNAL routine combines a terminal menu with reusable validation, create/update, read, delete and list entry points. It uses YottaDB transactions for database changes. Practice with fictional data in a dedicated database, never the website's actual journal. This short local example illustrates the record layout; the full routine is linked below.",
+    "code": [
+      "SET journal(\"J001\",\"title\")=\"A walk\"",
+      "SET journal(\"J001\",\"body\")=\"Noticed the trees\"",
+      "WRITE journal(\"J001\",\"title\"),\": \",journal(\"J001\",\"body\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk"
+        },
+        "output": "",
+        "explain": "Create the title."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk",
+          "journal(\"J001\",\"body\")": "Noticed the trees"
+        },
+        "output": "",
+        "explain": "Create the body."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "journal(\"J001\",\"title\")": "A walk",
+          "journal(\"J001\",\"body\")": "Noticed the trees"
+        },
+        "output": "A walk: Noticed the trees\n",
+        "explain": "Present the record."
+      }
+    ],
+    "question": "What should happen when validation fails?",
+    "choices": [
+      "Save anyway",
+      "Leave storage unchanged",
+      "Delete all entries"
+    ],
+    "answer": 1,
+    "why": "Rejected input must not change records.",
+    "task": "Download SSTJOURNAL.m.txt, save as SSTJOURNAL.m in the configured routine directory and run yottadb -run ^SSTJOURNAL. Use the project guide.",
+    "lab": "application",
+    "minutes": 12,
+    "practice": "Predict the result and explore the linked lab before practicing in a disposable learning environment.",
+    "reference": "langfeat.html",
+    "id": "50"
   }
 ];if(typeof module==='object'&&module.exports)module.exports=lessons;else root.SSTLessons=lessons;})(typeof window!=='undefined'?window:globalThis);

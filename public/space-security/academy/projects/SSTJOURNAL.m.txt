@@ -1,0 +1,56 @@
+SSTJOURNAL ; Beginner learning project - disposable database only
+ NEW action,id,title,body,result
+ FOR  DO  QUIT:action="Q"
+ . WRITE !,"C=create R=read U=update D=delete L=list Q=quit",!
+ . READ "Action: ",action
+ . IF action="Q" QUIT
+ . IF action="L" DO list QUIT
+ . IF (action'="C")&(action'="R")&(action'="U")&(action'="D") WRITE "Unknown action",! QUIT
+ . READ !,"ID (J001): ",id
+ . IF (action="C")!(action="U") READ !,"Title: ",title READ !,"Body: ",body
+ . IF action="C" SET result=$$save(id,title,body,0)
+ . IF action="U" SET result=$$save(id,title,body,1)
+ . IF action="R" SET result=$$read(id)
+ . IF action="D" DO
+ . . READ !,"Delete this fictional entry (Y/N)? ",result
+ . . SET result=$SELECT(result="Y":$remove(id),1:"Canceled")
+ . WRITE !,result,!
+ QUIT
+valid(id,title,body)
+ IF id'?1"J"3N QUIT "Invalid ID"
+ IF ($LENGTH(title)<1)!($LENGTH(title)>40) QUIT "Invalid title"
+ IF ($LENGTH(body)<1)!($LENGTH(body)>120) QUIT "Invalid body"
+ IF $FIND(title,"|")!$FIND(body,"|") QUIT "Delimiter not allowed"
+ QUIT "OK"
+save(id,title,body,update)
+ NEW result,exists
+ SET result=$$valid(id,title,body)
+ IF result'="OK" QUIT result
+ TSTART *
+ SET exists=$DATA(^SSTLearn("journal05",id))>0
+ IF exists,'update TROLLBACK  QUIT "Already exists"
+ IF 'exists,update TROLLBACK  QUIT "Missing"
+ SET ^SSTLearn("journal05",id,"title")=title
+ SET ^SSTLearn("journal05",id,"body")=body
+ TCOMMIT
+ QUIT "Saved"
+read(id)
+ NEW result
+ IF id'?1"J"3N QUIT "Invalid ID"
+ TSTART ()
+ IF '$DATA(^SSTLearn("journal05",id)) TROLLBACK  QUIT "Missing"
+ SET result=$GET(^SSTLearn("journal05",id,"title"))_"|"_$GET(^SSTLearn("journal05",id,"body"))
+ TCOMMIT
+ QUIT result
+remove(id)
+ IF id'?1"J"3N QUIT "Invalid ID"
+ TSTART ()
+ IF '$DATA(^SSTLearn("journal05",id)) TROLLBACK  QUIT "Missing"
+ KILL ^SSTLearn("journal05",id)
+ TCOMMIT
+ QUIT "Deleted"
+list
+ NEW id
+ SET id=""
+ FOR  SET id=$ORDER(^SSTLearn("journal05",id)) QUIT:id=""  WRITE id,": ",$$read(id),!
+ QUIT

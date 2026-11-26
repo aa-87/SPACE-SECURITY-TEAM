@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const M=require('../public/space-security/academy/lab-model.js');
 const lessons=require('../public/space-security/academy/curriculum.js');
-assert.equal(lessons.length,40);
+assert.equal(lessons.length,50);
 lessons.forEach((l,i)=>{assert.equal(l.id,String(i+1).padStart(2,'0'));assert.ok(l.answer>=0&&l.answer<l.choices.length);assert.ok(l.frames.length);l.frames.forEach(f=>assert.ok(f.line>=0&&f.line<l.code.length))});
 const t=new M.Tree();
 assert.equal(t.data([]),0);t.set(['Alex','city'],'Boston');assert.equal(t.data(['Alex']),10);assert.equal(t.data(['Alex','city']),1);t.set(['Alex'],'');assert.equal(t.data(['Alex']),11);assert.equal(t.get(['Alex'],'fallback'),'');assert.equal(t.get(['missing'],'fallback'),'fallback');assert.equal(t.data(['missing']),0);
