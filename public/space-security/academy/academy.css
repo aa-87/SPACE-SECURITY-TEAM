@@ -8,3 +8,12 @@
 
 /* Foundations 0.3: visual program construction */
 .construction-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px}.construction-grid>div{min-width:0}.call-stack{display:flex;flex-direction:column-reverse;gap:8px;padding:12px;border:1px dashed var(--rc-line);border-radius:10px}.stack-frame{padding:12px 16px;border:1px solid var(--rc-line);border-left:4px solid var(--rc-accent);background:var(--rc-bg);border-radius:6px;font:600 14px ui-monospace,monospace}.stack-frame:last-child{border-color:var(--rc-accent)}.construction-grid .lab-step{padding:12px}.construction-grid .lab-step strong{font-size:18px}.construction-grid pre{margin:10px 0}.construction-grid .academy-code-line{white-space:pre-wrap}.construction-grid .lab-step-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,125px),1fr))}@media(max-width:700px){.construction-grid{grid-template-columns:1fr;gap:10px}}
+
+/* Organize the growing curriculum into readable modules. */
+#academyLessons{display:block}
+.academy-module{margin:24px 0 36px}
+.academy-module-heading{font-size:20px;padding-bottom:12px;border-bottom:1px solid var(--rc-line)}
+.academy-module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.academy-card{min-width:0;overflow-wrap:anywhere}
+@media(max-width:900px){.academy-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.academy-module-grid{grid-template-columns:minmax(0,1fr)}.academy-card{padding:16px}.academy-progress{margin:12px 0}.academy-trace{grid-template-columns:minmax(0,1fr)}.academy-panel-head{flex-wrap:wrap}.academy-lesson-nav a{display:flex;align-items:center;min-height:44px}.academy pre{white-space:pre-wrap;overflow-wrap:anywhere}.academy-variable small{overflow-wrap:anywhere}.lab-panel svg{max-height:none}.lab-node-list{font-size:13px}}
