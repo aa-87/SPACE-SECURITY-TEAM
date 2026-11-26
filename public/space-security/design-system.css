@@ -94,3 +94,6 @@ main .backup-import-label{min-height:44px;white-space:normal}
  .sst-attribution a{width:100%}
 }
 @media(max-height:500px) and (orientation:landscape){.sst-header{position:relative}.sst-header .tracker-menu-panel{max-height:55vh}html{scroll-padding-top:16px}}
+
+/* Keep launch controls reachable after the non-sticky mobile header scrolls away. */
+@media(max-width:760px){.sst-header .tracker-menu-panel{max-height:min(52vh,420px);overscroll-behavior:contain}.sst-header .sst-nav>a{min-width:0}.sst-header .tracker-menu-copy{overflow-wrap:anywhere}.sst-header .tracker-menu-panel a{grid-template-columns:32px minmax(0,1fr) 12px;gap:8px}.sst-header .tracker-menu-icon{width:32px;height:32px}.rc-about .shell{width:100%}.rc-about :is(.tracker-head,.tracker-footer,.document-top){flex-wrap:wrap}.rc-about :is(.protocol-grid,.brief-grid,.privacy-grid,.training-grid)>*{min-width:0}}
