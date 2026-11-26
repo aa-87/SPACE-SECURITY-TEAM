@@ -13,7 +13,7 @@ A privacy-first personal observation workspace built on [MUMPS.IO](https://githu
 ![Space Security Team application demonstration](docs/fuh.gif)
 
 *Recorded project demonstration; appearance may differ from the current release candidate.*
-
+![](https://github.com/aa-87/efuhair.com/blob/main/docs/efuhair-lighthouse.png)
 ## Contents
 
 - [Application features](#application-features)
