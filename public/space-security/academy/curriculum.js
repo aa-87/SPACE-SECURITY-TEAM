@@ -1802,5 +1802,593 @@
     "practice": "Predict the output, step through the trace, then try the linked laboratory.",
     "reference": "langfeat.html",
     "id": "30"
+  },
+  {
+    "title": "Count the characters",
+    "topic": "$LENGTH",
+    "goal": "Measure a string.",
+    "intro": "A string is a sequence of characters. $LENGTH with one argument counts them, including spaces. An empty string contains zero characters. The visual examples use ASCII text so character and byte positions agree.",
+    "code": [
+      "SET text=\"Red apple\"",
+      "WRITE $LENGTH(text),!",
+      "WRITE $LENGTH(\"\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "text": "Red apple"
+        },
+        "output": "",
+        "explain": "Store nine characters, including the space."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "text": "Red apple"
+        },
+        "output": "9\n",
+        "explain": "Count each character."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "text": "Red apple"
+        },
+        "output": "9\n0\n",
+        "explain": "An empty string has length zero."
+      }
+    ],
+    "question": "How long is \"A B\"?",
+    "choices": [
+      "2",
+      "3",
+      "4"
+    ],
+    "answer": 1,
+    "why": "The space is a character too.",
+    "task": "Measure your own short ASCII phrase.",
+    "lab": "strings",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "31"
+  },
+  {
+    "title": "Select characters by position",
+    "topic": "$EXTRACT",
+    "goal": "Retrieve one character or a range.",
+    "intro": "Character positions start at one. $EXTRACT can select a single position or an inclusive start and end. A range beyond the end stops at the last character; a start beyond the end returns an empty string.",
+    "code": [
+      "SET text=\"MUMPS\"",
+      "WRITE $EXTRACT(text,2),!",
+      "WRITE $EXTRACT(text,2,4),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "text": "MUMPS"
+        },
+        "output": "",
+        "explain": "Number the characters from 1 to 5."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "text": "MUMPS"
+        },
+        "output": "U\n",
+        "explain": "Position 2 is U."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "text": "MUMPS"
+        },
+        "output": "U\nUMP\n",
+        "explain": "Positions 2 through 4 include U, M and P."
+      }
+    ],
+    "question": "What is $EXTRACT(\"MUMPS\",2,4)?",
+    "choices": [
+      "UM",
+      "UMP",
+      "MPS"
+    ],
+    "answer": 1,
+    "why": "Both endpoints are included.",
+    "task": "Select the first three characters of a word.",
+    "lab": "strings",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "32"
+  },
+  {
+    "title": "Locate a word",
+    "topic": "$FIND",
+    "goal": "Find a substring and interpret the returned position.",
+    "intro": "$FIND searches for a literal sequence of characters. Its result is the position immediately after a match, not the position where the match begins. Zero means that no match was found. This lesson searches for nonempty text.",
+    "code": [
+      "SET text=\"red apple\"",
+      "WRITE $FIND(text,\"apple\"),!",
+      "WRITE $FIND(text,\"pear\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "text": "red apple"
+        },
+        "output": "",
+        "explain": "The word apple occupies positions 5 through 9."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "text": "red apple"
+        },
+        "output": "10\n",
+        "explain": "The position after the match is 10."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "text": "red apple"
+        },
+        "output": "10\n0\n",
+        "explain": "No pear appears, so the result is zero."
+      }
+    ],
+    "question": "What is $FIND(\"ABC\",\"B\")?",
+    "choices": [
+      "2",
+      "3",
+      "0"
+    ],
+    "answer": 1,
+    "why": "B is at position 2; the next position is 3.",
+    "task": "Search for repeated text with different starting positions.",
+    "lab": "strings",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "33"
+  },
+  {
+    "title": "Separate a record into fields",
+    "topic": "$PIECE",
+    "goal": "Retrieve delimited fields without losing empty pieces.",
+    "intro": "A delimiter is a chosen separator between fields. $PIECE selects fields by one-based position. Two neighboring delimiters leave an empty field between them. A delimiter can contain more than one character. The examples use simple delimited strings, not quoted CSV.",
+    "code": [
+      "SET record=\"Alex|Boston||21\"",
+      "WRITE $PIECE(record,\"|\",2),!",
+      "WRITE $PIECE(record,\"|\",3),!",
+      "WRITE $PIECE(record,\"|\",4),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "record": "Alex|Boston||21"
+        },
+        "output": "",
+        "explain": "Four pieces exist, including an empty third piece."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "record": "Alex|Boston||21"
+        },
+        "output": "Boston\n",
+        "explain": "Select the second piece."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "record": "Alex|Boston||21"
+        },
+        "output": "Boston\n\n",
+        "explain": "The third piece is empty; WRITE still emits a newline."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "record": "Alex|Boston||21"
+        },
+        "output": "Boston\n\n21\n",
+        "explain": "The fourth piece has value 21."
+      }
+    ],
+    "question": "Which piece is empty?",
+    "choices": [
+      "2",
+      "3",
+      "4"
+    ],
+    "answer": 1,
+    "why": "Adjacent delimiters preserve the empty third field.",
+    "task": "Try selecting pieces 2 through 4.",
+    "lab": "strings",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "34"
+  },
+  {
+    "title": "Count and visit fields",
+    "topic": "$LENGTH / $PIECE",
+    "goal": "Visit every field in a delimited record.",
+    "intro": "With a nonempty delimiter, $LENGTH returns the number of pieces. A FOR loop can visit each one, including empty pieces. A delimiter that does not occur gives one piece; even an empty string has one piece for a nonempty delimiter.",
+    "code": [
+      "SET record=\"red||blue\"",
+      "WRITE $LENGTH(record,\"|\"),!",
+      "FOR i=1:1:$LENGTH(record,\"|\") WRITE i,\":\",$PIECE(record,\"|\",i),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "record": "red||blue"
+        },
+        "output": "",
+        "explain": "Store the record."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "record": "red||blue"
+        },
+        "output": "3\n",
+        "explain": "There are three pieces."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "record": "red||blue",
+          "i": 1
+        },
+        "output": "3\n1:red\n",
+        "explain": "Visit the first piece."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "record": "red||blue",
+          "i": 2
+        },
+        "output": "3\n1:red\n2:\n",
+        "explain": "Visit the empty piece."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "record": "red||blue",
+          "i": 3
+        },
+        "output": "3\n1:red\n2:\n3:blue\n",
+        "explain": "Visit the last piece."
+      }
+    ],
+    "question": "How many pieces are in \"red||blue\" using |?",
+    "choices": [
+      "2",
+      "3",
+      "4"
+    ],
+    "answer": 1,
+    "why": "Empty pieces count.",
+    "task": "List a record containing four pieces.",
+    "lab": "strings",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "35"
+  },
+  {
+    "title": "Update part of a record",
+    "topic": "SET $PIECE / SET $EXTRACT",
+    "goal": "Replace a field or character range without replacing the whole value.",
+    "intro": "SET can target $PIECE or $EXTRACT as well as a variable. The forms here replace an existing piece or one existing character. Other positions remain unchanged. More advanced extension and padding behavior is outside this exercise.",
+    "code": [
+      "SET record=\"Alex|Boston|21\"",
+      "SET $PIECE(record,\"|\",2)=\"Chicago\"",
+      "WRITE record,!",
+      "SET $EXTRACT(record,1)=\"a\"",
+      "WRITE record,!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "record": "Alex|Boston|21"
+        },
+        "output": "",
+        "explain": "Start with three fields."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "record": "Alex|Chicago|21"
+        },
+        "output": "",
+        "explain": "Replace only the city."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "record": "Alex|Chicago|21"
+        },
+        "output": "Alex|Chicago|21\n",
+        "explain": "Display the updated record."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "record": "alex|Chicago|21"
+        },
+        "output": "Alex|Chicago|21\n",
+        "explain": "Replace the first character."
+      },
+      {
+        "line": 4,
+        "memory": {
+          "record": "alex|Chicago|21"
+        },
+        "output": "Alex|Chicago|21\nalex|Chicago|21\n",
+        "explain": "The rest of the record remains intact."
+      }
+    ],
+    "question": "What does SET $PIECE(record,\"|\",2)=\"Chicago\" change?",
+    "choices": [
+      "The entire record",
+      "The second piece",
+      "The delimiter"
+    ],
+    "answer": 1,
+    "why": "SET targets the chosen part of the variable.",
+    "task": "Replace an existing piece with a new value.",
+    "lab": "strings",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "commands.html#set",
+    "id": "36"
+  },
+  {
+    "title": "Transform characters",
+    "topic": "$TRANSLATE",
+    "goal": "Replace or remove characters using a mapping.",
+    "intro": "$TRANSLATE maps each character in its second argument to the corresponding character in its third argument. If a mapped character has no replacement, it is removed. Other characters remain unchanged. The first occurrence of a duplicate source character determines its mapping.",
+    "code": [
+      "SET text=\"a-b-a\"",
+      "WRITE $TRANSLATE(text,\"ab\",\"AB\"),!",
+      "WRITE $TRANSLATE(text,\"-\",\"\"),!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "text": "a-b-a"
+        },
+        "output": "",
+        "explain": "Start with five characters."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "text": "a-b-a"
+        },
+        "output": "A-B-A\n",
+        "explain": "Replace a with A and b with B; leave hyphens."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "text": "a-b-a"
+        },
+        "output": "A-B-A\naba\n",
+        "explain": "A missing replacement removes hyphens."
+      }
+    ],
+    "question": "What is $TRANSLATE(\"a-b\",\"-\",\"\")?",
+    "choices": [
+      "ab",
+      "a b",
+      "a-b"
+    ],
+    "answer": 0,
+    "why": "The hyphen has no replacement and is removed.",
+    "task": "Create a simple character mapping.",
+    "lab": "strings",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "37"
+  },
+  {
+    "title": "Choose a value",
+    "topic": "$SELECT",
+    "goal": "Return a value based on the first true condition.",
+    "intro": "$SELECT examines condition:value pairs in order and returns the value from the first true condition. A final 1:value pair supplies a fallback. Without a true condition, YottaDB reports an error. This is an expression, not the IF command.",
+    "code": [
+      "SET score=7",
+      "SET label=$SELECT(score>10:\"High\",score>5:\"Middle\",1:\"Low\")",
+      "WRITE label,!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {
+          "score": 7
+        },
+        "output": "",
+        "explain": "Initialize the score."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "score": 7,
+          "label": "Middle"
+        },
+        "output": "",
+        "explain": "The first test is false; the second is true."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "score": 7,
+          "label": "Middle"
+        },
+        "output": "Middle\n",
+        "explain": "Display the selected value."
+      }
+    ],
+    "question": "Which value is selected when score is 11?",
+    "choices": [
+      "High",
+      "Middle",
+      "Low"
+    ],
+    "answer": 0,
+    "why": "The first true condition wins even if later conditions are also true.",
+    "task": "Try scores at the boundaries 5 and 10.",
+    "lab": "patterns",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "38"
+  },
+  {
+    "title": "Recognize a format",
+    "topic": "Pattern matching (?)",
+    "goal": "Test the shape of an entire value.",
+    "intro": "A pattern describes the shape of a value. In the example 3N means exactly three numeric characters. 1U2N means one uppercase letter followed by two numeric characters. The ? operator returns 1 if the whole value matches and 0 otherwise. The lab uses ASCII characters and only a few fixed patterns.",
+    "code": [
+      "WRITE \"123\"?3N,!",
+      "WRITE \"A12\"?1U2N,!",
+      "WRITE \"1234\"?3N,!"
+    ],
+    "frames": [
+      {
+        "line": 0,
+        "memory": {},
+        "output": "1\n",
+        "explain": "Exactly three numeric characters match."
+      },
+      {
+        "line": 1,
+        "memory": {},
+        "output": "1\n1\n",
+        "explain": "One uppercase letter and two digits match."
+      },
+      {
+        "line": 2,
+        "memory": {},
+        "output": "1\n1\n0\n",
+        "explain": "Four digits do not match exactly three."
+      }
+    ],
+    "question": "Which value matches 1U2N?",
+    "choices": [
+      "AB1",
+      "A12",
+      "a12"
+    ],
+    "answer": 1,
+    "why": "The first character must be uppercase, followed by two digits.",
+    "task": "Test values against a fixed pattern.",
+    "lab": "patterns",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "langfeat.html",
+    "id": "39"
+  },
+  {
+    "title": "Build a record formatter",
+    "topic": "Project",
+    "goal": "Combine field selection, validation and formatting in a reusable routine.",
+    "intro": "A small program can turn a delimited record into a readable sentence. This example checks the number of fields and the three-digit code, then formats a fictional record. Save as SSTFORMAT.m. It is not a general CSV parser and does not handle quoted delimiters.",
+    "code": [
+      "SSTFORMAT",
+      " NEW record",
+      " SET record=\"Alex|Boston|123\"",
+      " WRITE $$format(record),!",
+      " QUIT",
+      "format(record)",
+      " IF $LENGTH(record,\"|\")'=3 QUIT \"Invalid fields\"",
+      " IF $PIECE(record,\"|\",3)'?3N QUIT \"Invalid code\"",
+      " QUIT $PIECE(record,\"|\",1)_\" lives in \"_$PIECE(record,\"|\",2)"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {},
+        "output": "",
+        "explain": "Protect the caller's record variable."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "record": "Alex|Boston|123"
+        },
+        "output": "",
+        "explain": "Store a sample record."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "record": "Alex|Boston|123"
+        },
+        "output": "",
+        "explain": "Invoke format with the record value."
+      },
+      {
+        "line": 6,
+        "memory": {
+          "record": "Alex|Boston|123"
+        },
+        "output": "",
+        "explain": "There are three fields, so continue."
+      },
+      {
+        "line": 7,
+        "memory": {
+          "record": "Alex|Boston|123"
+        },
+        "output": "",
+        "explain": "The code matches three digits."
+      },
+      {
+        "line": 8,
+        "memory": {
+          "record": "Alex|Boston|123"
+        },
+        "output": "",
+        "explain": "Return the formatted sentence."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "record": "Alex|Boston|123"
+        },
+        "output": "Alex lives in Boston\n",
+        "explain": "WRITE displays the returned string."
+      }
+    ],
+    "question": "What should happen if the code is \"12\"?",
+    "choices": [
+      "Return Invalid code",
+      "Return a valid sentence",
+      "Automatically add a digit"
+    ],
+    "answer": 0,
+    "why": "The pattern requires exactly three digits.",
+    "task": "Change the code to 12 and predict the error result.",
+    "lab": "patterns",
+    "minutes": 9,
+    "practice": "Predict the result, step through the example, then change the inputs in the linked visual laboratory.",
+    "reference": "functions.html",
+    "id": "40"
   }
 ];if(typeof module==='object'&&module.exports)module.exports=lessons;else root.SSTLessons=lessons;})(typeof window!=='undefined'?window:globalThis);
