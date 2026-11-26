@@ -1,0 +1,14 @@
+/* Foundations study tools: bounded local state, never personal tracker data. */
+(function(root){'use strict';
+const groups=['Programming fundamentals','Hierarchical information','Program construction','Visual data manipulation','Complete application development'];
+const key='sst.academy.study.v1',progressKey='sst.academy.progress.v1';
+function ids(value,lessons){if(!Array.isArray(value)||value.some(x=>typeof x!=='string'||!lessons.some(l=>l.id===x)))throw Error('Invalid lesson identifiers.');return [...new Set(value)].sort()}
+function study(value,lessons){if(!value||typeof value!=='object'||Array.isArray(value)||!Object.hasOwn(value,'bookmarks')||!Object.hasOwn(value,'last'))throw Error('Invalid study data.');return {bookmarks:ids(value.bookmarks,lessons),last:value.last===null?null:ids([value.last],lessons)[0]}}
+function parse(value,lessons){if(!value||value.format!=='sst-academy-backup-v1'||value.version!==1)throw Error('Unsupported learning backup.');return {completed:ids(value.completed,lessons),study:study(value.study,lessons)}}
+function read(store,lessons){const p=store.getItem(progressKey),s=store.getItem(key);return {completed:ids(p===null?[]:JSON.parse(p),lessons),study:study(s===null?{bookmarks:[],last:null}:JSON.parse(s),lessons),raw:[p,s]}}
+function backup(store,lessons){const v=read(store,lessons);return {format:'sst-academy-backup-v1',version:1,completed:v.completed,study:v.study}}
+function restore(store,value,lessons){const v=parse(value,lessons),old=read(store,lessons);const next=[JSON.stringify(ids(old.completed.concat(v.completed),lessons)),JSON.stringify({bookmarks:ids(old.study.bookmarks.concat(v.study.bookmarks),lessons),last:old.study.last||v.study.last})];const keys=[progressKey,key];let done=0;try{for(let i=0;i<2;i++){if(store.getItem(keys[i])!==old.raw[i])throw Error('Learning data changed in another tab.');store.setItem(keys[i],next[i]);done++}}catch(e){let rollback=true;for(let i=done-1;i>=0;i--){try{if(store.getItem(keys[i])!==next[i]){rollback=false;continue}if(old.raw[i]===null)store.removeItem(keys[i]);else store.setItem(keys[i],old.raw[i])}catch(_){rollback=false}}throw Error(rollback?'Import failed; completed writes rolled back.':'Import failed; rollback incomplete. Review your data.')}return read(store,lessons)}
+function moduleStats(lessons,completed){return groups.map((name,i)=>{const items=lessons.slice(i*10,i*10+10);return {name,items,done:items.filter(l=>completed.includes(l.id)).length}})}
+function search(lessons,q){q=q.trim().toLowerCase();return lessons.filter(l=>[l.id,l.title,l.topic,l.goal,l.intro,...l.code].join(' ').toLowerCase().includes(q))}
+const api={groups,key,progressKey,ids,study,parse,read,backup,restore,moduleStats,search};if(typeof module==='object'&&module.exports)module.exports=api;else root.SSTStudy=api;
+})(typeof window!=='undefined'?window:globalThis);

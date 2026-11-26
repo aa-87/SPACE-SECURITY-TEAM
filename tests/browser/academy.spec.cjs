@@ -135,3 +135,22 @@ test('application CRUD and reliability laboratories',async({page})=>{
  await expect(page.locator('#journalProjectLink')).toBeVisible();
  expect(errors).toEqual([]);
 });
+
+test('study desk bookmarks, resume, search and assessment',async({page})=>{
+ await page.goto('/learn/lesson/34');
+ await page.getByRole('button',{name:'Bookmark lesson',exact:true}).click();
+ await page.goto('/learn');
+ await expect(page.locator('#studyMap .study-module')).toHaveCount(5);
+ await expect(page.locator('#studyResume')).toHaveAttribute('href','/learn/lesson/34');
+ await expect(page.locator('#studyBookmarks a')).toHaveAttribute('href','/learn/lesson/34');
+ await page.getByLabel('Search lessons and laboratories').fill('PIECE');
+ await expect(page.locator('#studyResults')).toContainText('Lesson 34');
+ await page.locator('#assessmentCheck').click();
+ await expect(page.locator('#assessmentResult')).toContainText('Answer every question');
+ const answers=await page.evaluate(()=>window.SSTLessons.slice(0,10).map(l=>l.answer));
+ for(let i=0;i<10;i++)await page.locator('input[name="assessment-'+i+'"][value="'+answers[i]+'"]').check();
+ await page.locator('#assessmentCheck').click();
+ await expect(page.locator('#assessmentResult')).toContainText('10 / 10 correct');
+ const file=page.waitForEvent('download');await page.locator('#studyExport').click();expect((await file).suggestedFilename()).toBe('sst-academy-progress.json');
+ await page.goto('/learn/lesson/34');const practice=page.waitForEvent('download');await page.locator('#studyDownload').click();expect((await practice).suggestedFilename()).toBe('SSTL34.m');
+});

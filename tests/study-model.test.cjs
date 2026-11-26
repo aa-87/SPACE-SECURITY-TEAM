@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict'),M=require('../public/space-security/academy/study-model.js'),L=require('../public/space-security/academy/curriculum.js');
+const data=new Map();const store={getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};
+assert.equal(M.read(store,L).completed.length,0);assert.equal(M.moduleStats(L,[]).length,5);
+store.setItem(M.progressKey,'["01","10"]');store.setItem(M.key,JSON.stringify({bookmarks:['02'],last:'02'}));
+const b=M.backup(store,L);assert.equal(b.completed.length,2);assert.equal(b.study.last,'02');
+M.restore(store,{format:b.format,version:1,completed:['10','11'],study:{bookmarks:['03'],last:'03'}},L);
+assert.equal(M.read(store,L).completed.join(','),'01,10,11');assert.equal(M.read(store,L).study.bookmarks.join(','),'02,03');assert.equal(M.read(store,L).study.last,'02');
+assert.throws(()=>M.restore(store,{...b,completed:['99']},L));assert.equal(M.read(store,L).completed.length,3);
+assert.equal(M.moduleStats(L,['01','10','11'])[0].done,2);assert.ok(M.search(L,'$PIECE').length>0);
+assert.throws(()=>M.parse({...b,version:2},L));assert.throws(()=>M.parse({...b,study:{bookmarks:[],last:'99'}},L));
+console.log('Study models passed');
