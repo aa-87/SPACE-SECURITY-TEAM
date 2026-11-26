@@ -1,11 +1,15 @@
-# Space Security Team — coming-soon landing page
+# Space Security Team — MUMPS.IO integration guide
 
-An optional, isolated MIOTPL landing page for the Space Security Team concept. It does not replace the existing SOUT landing page or the framework's default routes.
+The current application provides a browser-local personal workspace with three trackers, journal, dashboard and MUMPS Academy. Register the module in a configured MUMPS.IO host, resolving any existing root/static route conflicts first. For the current product overview see [README](../README.md), [MUMPS learning guide](MUMPS_LEARNING_GUIDE.md) and [Foundations 1.0 release candidate](ACADEMY_FOUNDATIONS_1_0.md).
+
+The chronological development notes below describe earlier milestones; references to two logs, planned features or offline-only operation reflect those historical stages, not current scope. Full offline reload is not implemented.
 
 ## Included files
 
 - `templates/layouts/space_security_layout.html` — document shell, metadata, font loading, and stylesheet.
-- `templates/pages/space_security_home.html` — Mustache-compatible landing page.
+- `templates/pages/space_security_home.html` — Mustache-compatible dashboard page.
+- `templates/pages/space_security_academy.html` — academy document served by `ACADEMY^SPACETEAM`.
+- `public/space-security/academy/` — curriculum, ten visual labs, reference, study tools and downloadable journal project.
 - `public/space-security/space-security.css` — responsive editorial/dashboard styling with dark/light themes.
 - `public/space-security/dashboard.js` — read-only controller for combined local tracker summaries and activity.
 - `routines/SPACETEAM.m` — public page and isolated static-asset route handlers.
@@ -27,7 +31,13 @@ If the application already initializes MIOROUTE and MIOTPL, add only `D REG^SPAC
 
 The deployed static handler uses the confirmed working MIOSTATIC configuration: `CONF("server","static","mount")="/public"` and `CONF("server","static","root")="public"`. The `/public/*path` route serves all nested public assets. Preserve this exact mount/root pair and do not add a competing `/public/space-security/*path` handler. Keep the route registration alongside the application's existing modules; do not register it twice.
 
-## Product and content decisions
+## Current academy integration
+
+The existing REG entry registers GET `/learn`, `/learn/foundations`, `/learn/reference`, `/learn/lesson/01` through `/learn/lesson/50`, `/learn/lab` and ten named lab routes. The academy template is served through MIOTPL; the existing static mount serves its scripts, styles and project source. No new static mount or server-side code execution endpoint is required. The sync script copies the academy template and entire public subtree; it copies only the three selected legacy integration documents, not the full academy documentation. Read the learner and release guides in the project repository.
+
+After syncing application changes, reload the routine, rebuild routes and refresh the template cache using the host's existing procedure. For documentation-only changes, no production sync or restart is required.
+
+## Historical product and content decisions
 
 - **Positioning:** a self-directed human-development project framed as a Milky Way / space-security training program.
 - **First objective:** a cigarette-cessation field log, with future logging and progress visualization described as planned functionality.
