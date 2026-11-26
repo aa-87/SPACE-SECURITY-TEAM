@@ -19,19 +19,31 @@ SPACETEAM ; Space Security Team coming-soon landing page
 	QUIT
 	;
 REG(CONF)
-	NEW META
+	NEW META,I
 	KILL META
 	SET META("authRequired")=0
 	DO ADDM^MIOROUTE("GET","/","HOME^SPACETEAM",.META)
 	DO ADDM^MIOROUTE("GET","/public/*path","STATIC^SPACETEAM",.META)
 	DO ADDM^MIOROUTE("HEAD","/public/*path","STATIC^SPACETEAM",.META)
 	DO ADDM^MIOROUTE("GET","/space-security","HOME^SPACETEAM",.META)
+	DO ADDM^MIOROUTE("GET","/learn","ACADEMY^SPACETEAM",.META)
+	DO ADDM^MIOROUTE("GET","/learn/foundations","ACADEMY^SPACETEAM",.META)
+	DO ADDM^MIOROUTE("GET","/learn/reference","ACADEMY^SPACETEAM",.META)
+	FOR I=1:1:10 DO ADDM^MIOROUTE("GET","/learn/lesson/"_$TRANSLATE($JUSTIFY(I,2)," ","0"),"ACADEMY^SPACETEAM",.META)
 	QUIT
 	;
 HOME(DEV,CONF,REQ,CTX)
 	NEW TCTX,OUT,ERR,HEAD
 	KILL TCTX,ERR
 	DO RENDERPAGE^MIOTPL("pages/space_security_home.html","layouts/space_security_layout.html",.CONF,.TCTX,.OUT,.ERR)
+	IF $DATA(ERR) DO RESPERR(.DEV,.CONF,.CTX,500,"template_error",$GET(ERR("error"),"render_failed")) QUIT
+	SET HEAD("Content-Type")="text/html; charset=utf-8"
+	DO RESPX^MIOHTTP(.DEV,.CONF,200,.HEAD,OUT,$GET(CTX("request_id")),.CTX)
+	QUIT
+	;
+ACADEMY(DEV,CONF,REQ,CTX)
+	NEW TCTX,OUT,ERR,HEAD
+	DO RENDER^MIOTPL("pages/space_security_academy.html",.CONF,.TCTX,.OUT,.ERR)
 	IF $DATA(ERR) DO RESPERR(.DEV,.CONF,.CTX,500,"template_error",$GET(ERR("error"),"render_failed")) QUIT
 	SET HEAD("Content-Type")="text/html; charset=utf-8"
 	DO RESPX^MIOHTTP(.DEV,.CONF,200,.HEAD,OUT,$GET(CTX("request_id")),.CTX)
