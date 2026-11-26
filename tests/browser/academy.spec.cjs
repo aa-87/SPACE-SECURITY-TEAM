@@ -32,3 +32,25 @@ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('sst.academy.prog
 for(const kind of ['trees','expressions','flow','memory']){await page.goto('/learn/lab/'+kind);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2)).toBeTruthy()}
 await page.goto('/learn/lesson/20');await expect(page.locator('#lessonLab')).toHaveAttribute('href','/learn/lab/trees');expect(errors).toEqual([]);
 });
+
+test('routine tracing and program construction',async({page})=>{
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto('/learn/lab/routines');
+await expect(page.getByLabel('Routine example',{exact:true})).toBeVisible();
+const next=page.getByRole('button',{name:'Next instruction',exact:true});
+await next.click();await next.click();await expect(page.locator('#routineStack')).toContainText('change');
+await next.click();await expect(page.locator('#routineMemory')).toContainText('Undefined');
+await next.click();await next.click();await next.click();await expect(page.locator('#routineOutput')).toHaveText('4');
+await page.getByRole('button',{name:'Previous instruction'}).click();await expect(page.locator('#routineOutput')).toHaveText('');
+await page.getByLabel('Routine example',{exact:true}).selectOption('reference');
+for(let i=0;i<5;i++)await next.click();await expect(page.locator('#routineOutput')).toHaveText('5');
+await page.getByLabel('Routine example',{exact:true}).selectOption('function');
+for(let i=0;i<4;i++)await next.click();await expect(page.locator('#routineOutput')).toHaveText('8');
+await page.goto('/learn/lab/construction');
+await page.getByRole('button',{name:'Check program'}).click();await expect(page.locator('#buildFeedback')).toContainText('Not yet');
+await page.getByLabel('Choose the missing instruction',{exact:true}).selectOption('1');
+await page.getByRole('button',{name:'Check program'}).click();await expect(page.locator('#buildOutput')).toHaveText('5');await expect(page.locator('#buildFeedback')).toContainText('Correct!');
+await page.getByLabel('Challenge',{exact:true}).selectOption('4');await page.getByLabel('Choose the missing instruction',{exact:true}).selectOption('1');await page.getByRole('button',{name:'Check program'}).click();await expect(page.locator('#buildOutput')).toHaveText('8');
+expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2)).toBeTruthy();
+await page.goto('/learn/lesson/30');await expect(page.locator('#lessonLab')).toHaveAttribute('href','/learn/lab/construction');expect(errors).toEqual([]);
+});
