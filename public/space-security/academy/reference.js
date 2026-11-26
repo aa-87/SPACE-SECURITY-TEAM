@@ -28,6 +28,10 @@ const entries=[
 ['_','Operator','Concatenate values.','WRITE "Red"_" apple",!',4,'','langfeat.html'],
 ['$$','Syntax','Invoke an extrinsic function and use its return value.','SET result=$$double(4)',27,'routines','langfeat.html'],
 ['^','Syntax','Identify a global variable reference.','WRITE $GET(^SSTLearn("message")),!',18,'memory','langfeat.html'],
+['LOCK','Command','Coordinate cooperating processes using named locks.','LOCK +^SSTLearn("demoLock"):1',47,'reliability','commands.html#lock'],
+['TSTART','Command','Begin transaction processing; restart behavior depends on the form used.','TSTART ()',48,'reliability','commands.html'],
+['TCOMMIT','Command','Commit transaction changes at the outermost transaction level.','TCOMMIT',48,'reliability','commands.html'],
+['TROLLBACK','Command','Discard uncommitted database changes.','TROLLBACK',48,'reliability','commands.html'],
 ['yottadb -direct','YottaDB environment','Enter interactive Direct Mode from a configured shell.','yottadb -direct',10,'',''],
 ['yottadb -run','YottaDB environment','Execute a named routine from a configured shell.','yottadb -run ^HELLO',10,'','']
 ];
