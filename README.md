@@ -244,10 +244,10 @@ Report reproducible issues with the browser, viewport, commit and synthetic step
 No standalone LICENSE file was found during the repository review. Do not assume a public repository grants permission to redistribute or modify its code. Existing source notices remain unchanged; licensing terms should be established by the repository owner before a wider release.
 
 
-## MUMPS Academy — Foundations 0.2
+## MUMPS Academy — Foundations 0.3
 
-Open `/learn` for twenty beginner-first lessons, including subscripted variables, sparse trees, `$DATA`, `$GET`, `$ORDER`, globals and a guided contact-directory project. The four interactive laboratories are at `/learn/lab` (trees, expressions, flow and memory). Lesson links connect the appropriate visual models to the curriculum.
+Open `/learn` for thirty beginner-first lessons, from output and variables through hierarchical information, routines, scope, parameters, extrinsic functions and a reusable calculator project. Six visual laboratories are available at `/learn/lab`: trees, expressions, flow, memory, routines and construction. The new routine lab supports stepping forward and backward through bounded call traces; the construction lab offers five instruction-selection and debugging challenges with prepared output.
 
-The models are intentionally constrained demonstrations, not a general interpreter. Standard MUMPS constructs are taught first; YottaDB environment instructions are separately identified. Learning progress remains under `sst.academy.progress.v1`; existing lesson IDs 01–10 are unchanged. No tracker data or database is modified by the labs.
+The models are deliberately constrained teaching demonstrations, not a general M interpreter. Standard MUMPS constructs are taught first; YottaDB environment instructions are identified separately. Learning progress remains under `sst.academy.progress.v1`; lesson IDs 01–20 are unchanged. Labs do not modify tracker data or a real database.
 
-Run `node tests/academy-model.test.cjs` and the existing Playwright suite. Actual YottaDB verification and live route acceptance remain separate from the fixture tests. See [Foundations 0.2](docs/ACADEMY_FOUNDATIONS_0_2.md) for scope and verification instructions.
+Run `node tests/academy-model.test.cjs`, `node tests/construction-model.test.cjs` and the existing Playwright suite. An opt-in YottaDB verification harness is available for a disposable learning database. See [Foundations 0.3](docs/ACADEMY_FOUNDATIONS_0_3.md) for scope, deployment and runtime verification instructions.
