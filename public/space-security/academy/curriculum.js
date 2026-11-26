@@ -1095,5 +1095,712 @@
     "lab": "trees",
     "reference": "langfeat.html",
     "id": "20"
+  },
+  {
+    "title": "Call a named block",
+    "topic": "DO / QUIT",
+    "goal": "Follow a subroutine call and return.",
+    "intro": "A label names an entry point in a routine. DO transfers control to that entry point and remembers where to return. QUIT without an argument returns from the call. Save this as SSTCALL.m. The first QUIT prevents execution from falling through into the next label.",
+    "code": [
+      "SSTCALL",
+      " WRITE \"Start\",!",
+      " DO greet",
+      " WRITE \"End\",!",
+      " QUIT",
+      "greet",
+      " WRITE \"Hello\",!",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {},
+        "output": "Start\n",
+        "explain": "Begin at the main entry."
+      },
+      {
+        "line": 2,
+        "memory": {},
+        "output": "Start\n",
+        "explain": "DO remembers the next instruction."
+      },
+      {
+        "line": 6,
+        "memory": {},
+        "output": "Start\nHello\n",
+        "explain": "Execute greet."
+      },
+      {
+        "line": 7,
+        "memory": {},
+        "output": "Start\nHello\n",
+        "explain": "Return to the caller."
+      },
+      {
+        "line": 3,
+        "memory": {},
+        "output": "Start\nHello\nEnd\n",
+        "explain": "Resume after DO."
+      },
+      {
+        "line": 4,
+        "memory": {},
+        "output": "Start\nHello\nEnd\n",
+        "explain": "Return from the main routine."
+      }
+    ],
+    "question": "Where does execution resume after greet returns?",
+    "choices": [
+      "At the first line",
+      "After DO greet",
+      "At greet again"
+    ],
+    "answer": 1,
+    "why": "DO preserves a return point.",
+    "task": "Add a second greeting call.",
+    "lab": "routines",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "21"
+  },
+  {
+    "title": "See the call stack",
+    "topic": "Nested DO",
+    "goal": "Understand nested return points.",
+    "intro": "A call stack records active invocations. Each DO adds a level; QUIT removes that level and returns to its caller. Save as SSTNEST.m. This trace shows the conceptual stack, not an implementation-specific stack inspection command.",
+    "code": [
+      "SSTNEST",
+      " DO outer",
+      " WRITE \"Done\",!",
+      " QUIT",
+      "outer",
+      " WRITE \"Outer\",!",
+      " DO inner",
+      " QUIT",
+      "inner",
+      " WRITE \"Inner\",!",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {},
+        "output": "",
+        "explain": "Enter outer."
+      },
+      {
+        "line": 5,
+        "memory": {},
+        "output": "Outer\n",
+        "explain": "Outer writes its message."
+      },
+      {
+        "line": 6,
+        "memory": {},
+        "output": "Outer\n",
+        "explain": "Outer calls inner."
+      },
+      {
+        "line": 9,
+        "memory": {},
+        "output": "Outer\nInner\n",
+        "explain": "Inner writes its message."
+      },
+      {
+        "line": 10,
+        "memory": {},
+        "output": "Outer\nInner\n",
+        "explain": "Return to outer."
+      },
+      {
+        "line": 7,
+        "memory": {},
+        "output": "Outer\nInner\n",
+        "explain": "Return to main."
+      },
+      {
+        "line": 2,
+        "memory": {},
+        "output": "Outer\nInner\nDone\n",
+        "explain": "Main resumes."
+      }
+    ],
+    "question": "Which call returns first?",
+    "choices": [
+      "outer",
+      "inner",
+      "main"
+    ],
+    "answer": 1,
+    "why": "The most recent active call returns first.",
+    "task": "Draw the call stack at each step.",
+    "lab": "routines",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "22"
+  },
+  {
+    "title": "Share a local variable",
+    "topic": "Dynamic visibility",
+    "goal": "Recognize that a DO call does not automatically isolate locals.",
+    "intro": "Local variables are visible in the current process unless protected by NEW or parameter binding. An ordinary DO can therefore change a caller's variable. Save as SSTSHARE.m.",
+    "code": [
+      "SSTSHARE",
+      " SET count=4",
+      " DO change",
+      " WRITE count,!",
+      " QUIT",
+      "change",
+      " SET count=9",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "count": 4
+        },
+        "output": "",
+        "explain": "Set the caller's count."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "count": 4
+        },
+        "output": "",
+        "explain": "Call change; count is still visible."
+      },
+      {
+        "line": 6,
+        "memory": {
+          "count": 9
+        },
+        "output": "",
+        "explain": "Update the same variable."
+      },
+      {
+        "line": 7,
+        "memory": {
+          "count": 9
+        },
+        "output": "",
+        "explain": "Return without restoring count."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "count": 9
+        },
+        "output": "9\n",
+        "explain": "The caller sees the changed value."
+      }
+    ],
+    "question": "What is printed?",
+    "choices": [
+      "4",
+      "9",
+      "Undefined"
+    ],
+    "answer": 1,
+    "why": "An ordinary DO does not create a separate local namespace.",
+    "task": "Try the protected and unprotected modes.",
+    "lab": "routines",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "23"
+  },
+  {
+    "title": "Protect a caller's value",
+    "topic": "NEW",
+    "goal": "See how NEW saves and restores a local name.",
+    "intro": "NEW count hides the previous value and descendants at the current invocation level. The new count starts undefined. On return from the call the old state is restored. Save as SSTSCOPE.m.",
+    "code": [
+      "SSTSCOPE",
+      " SET count=4",
+      " DO change",
+      " WRITE count,!",
+      " QUIT",
+      "change",
+      " NEW count",
+      " SET count=9",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "count": 4
+        },
+        "output": "",
+        "explain": "Set the original value."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "count": 4
+        },
+        "output": "",
+        "explain": "Call change."
+      },
+      {
+        "line": 6,
+        "memory": {},
+        "output": "",
+        "explain": "NEW protects the caller's state; count is now undefined."
+      },
+      {
+        "line": 7,
+        "memory": {
+          "count": 9
+        },
+        "output": "",
+        "explain": "Set the protected local."
+      },
+      {
+        "line": 8,
+        "memory": {
+          "count": 4
+        },
+        "output": "",
+        "explain": "QUIT restores the original value."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "count": 4
+        },
+        "output": "4\n",
+        "explain": "The caller prints its original count."
+      }
+    ],
+    "question": "Does NEW initialize count to zero?",
+    "choices": [
+      "Yes",
+      "No, it becomes undefined",
+      "It deletes the caller's value permanently"
+    ],
+    "answer": 1,
+    "why": "NEW saves the previous state and starts with an undefined name.",
+    "task": "Toggle NEW in the routine laboratory.",
+    "lab": "routines",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "24"
+  },
+  {
+    "title": "Give a routine an argument",
+    "topic": "Parameters by value",
+    "goal": "Pass a value to a named formal parameter.",
+    "intro": "The argument in a call supplies a value to the formal parameter named at the label. A value parameter is local to the invocation; changing it does not change the original caller variable. Save as SSTVALUE.m.",
+    "code": [
+      "SSTVALUE",
+      " SET n=4",
+      " DO show(n)",
+      " WRITE n,!",
+      " QUIT",
+      "show(value)",
+      " SET value=value+1",
+      " WRITE value,!",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "n": 4
+        },
+        "output": "",
+        "explain": "Initialize n."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "n": 4,
+          "value": 4
+        },
+        "output": "",
+        "explain": "Bind value to the supplied value."
+      },
+      {
+        "line": 6,
+        "memory": {
+          "n": 4,
+          "value": 5
+        },
+        "output": "",
+        "explain": "Change the formal parameter."
+      },
+      {
+        "line": 7,
+        "memory": {
+          "n": 4,
+          "value": 5
+        },
+        "output": "5\n",
+        "explain": "Display the incremented parameter."
+      },
+      {
+        "line": 8,
+        "memory": {
+          "n": 4
+        },
+        "output": "5\n",
+        "explain": "Return and remove the parameter binding."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "n": 4
+        },
+        "output": "5\n4\n",
+        "explain": "The original n is unchanged."
+      }
+    ],
+    "question": "What is n after the call?",
+    "choices": [
+      "5",
+      "4",
+      "Undefined"
+    ],
+    "answer": 1,
+    "why": "A value argument does not alias the caller's variable.",
+    "task": "Compare passing by value and reference.",
+    "lab": "routines",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "25"
+  },
+  {
+    "title": "Let a routine update a variable",
+    "topic": "Parameters by reference",
+    "goal": "Use a leading period to pass an unsubscripted local by reference.",
+    "intro": "DO increment(.n) passes the variable itself by reference. The formal parameter refers to that variable, so assignments through it affect the caller. Save as SSTREF.m. The leading period belongs to the actual argument.",
+    "code": [
+      "SSTREF",
+      " SET n=4",
+      " DO increment(.n)",
+      " WRITE n,!",
+      " QUIT",
+      "increment(value)",
+      " SET value=value+1",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "n": 4
+        },
+        "output": "",
+        "explain": "Initialize n."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "n": 4,
+          "value": 4
+        },
+        "output": "",
+        "explain": "Bind value by reference to n."
+      },
+      {
+        "line": 6,
+        "memory": {
+          "n": 5,
+          "value": 5
+        },
+        "output": "",
+        "explain": "Update the referenced variable."
+      },
+      {
+        "line": 7,
+        "memory": {
+          "n": 5
+        },
+        "output": "",
+        "explain": "Return; the caller retains the update."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "n": 5
+        },
+        "output": "5\n",
+        "explain": "Display the changed n."
+      }
+    ],
+    "question": "What does the period in .n do here?",
+    "choices": [
+      "Passes a reference",
+      "Marks a comment",
+      "Adds a decimal point"
+    ],
+    "answer": 0,
+    "why": "It passes the local variable by reference.",
+    "task": "Use the reference mode in the lab.",
+    "lab": "routines",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "26"
+  },
+  {
+    "title": "Return an answer",
+    "topic": "Extrinsic functions",
+    "goal": "Use $$ and QUIT with a value.",
+    "intro": "An extrinsic function is invoked with $$ in an expression. Its QUIT returns a value. Unlike DO, this invocation requires a return value. Save as SSTFUNC.m.",
+    "code": [
+      "SSTFUNC",
+      " SET result=$$double(4)",
+      " WRITE result,!",
+      " QUIT",
+      "double(n)",
+      " QUIT n*2"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "n": 4
+        },
+        "output": "",
+        "explain": "Enter double with argument 4; the assignment is waiting."
+      },
+      {
+        "line": 5,
+        "memory": {
+          "result": 8
+        },
+        "output": "",
+        "explain": "Return 8 and finish the assignment."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "result": 8
+        },
+        "output": "8\n",
+        "explain": "Print the returned value."
+      }
+    ],
+    "question": "Which instruction returns a value from the function?",
+    "choices": [
+      "WRITE n*2",
+      "QUIT n*2",
+      "DO n*2"
+    ],
+    "answer": 1,
+    "why": "An extrinsic returns its QUIT argument.",
+    "task": "Change the argument and predict the result.",
+    "lab": "routines",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "27"
+  },
+  {
+    "title": "Compose small functions",
+    "topic": "Reusable functions",
+    "goal": "Combine returned values in an expression.",
+    "intro": "Functions can be combined. Each function call returns its own value to the expression. Parentheses still control grouping. Save as SSTCOMPOSE.m.",
+    "code": [
+      "SSTCOMPOSE",
+      " SET result=$$double(3)+$$double(4)",
+      " WRITE result,!",
+      " QUIT",
+      "double(n)",
+      " QUIT n*2"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "n": 3
+        },
+        "output": "",
+        "explain": "Evaluate the first call."
+      },
+      {
+        "line": 5,
+        "memory": {},
+        "output": "",
+        "explain": "Return 6."
+      },
+      {
+        "line": 1,
+        "memory": {
+          "n": 4
+        },
+        "output": "",
+        "explain": "Evaluate the second call."
+      },
+      {
+        "line": 5,
+        "memory": {
+          "result": 14
+        },
+        "output": "",
+        "explain": "Return 8, add it to 6, and assign 14."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "result": 14
+        },
+        "output": "14\n",
+        "explain": "Display the total."
+      }
+    ],
+    "question": "What is the result?",
+    "choices": [
+      "12",
+      "14",
+      "28"
+    ],
+    "answer": 1,
+    "why": "Each function returns its doubled input; add 6 and 8.",
+    "task": "Build a two-call expression.",
+    "lab": "construction",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "28"
+  },
+  {
+    "title": "Find and repair a mistake",
+    "topic": "Debugging",
+    "goal": "Use an expected result to identify a logic error.",
+    "intro": "Debugging is the process of finding why a program does not behave as intended. Start with a concrete expected result, inspect the intermediate values, and change one instruction at a time. Here is the corrected program; try the broken version in the debugger. Save as SSTDEBUG.m.",
+    "code": [
+      "SSTDEBUG",
+      " SET count=4",
+      " SET count=count+1",
+      " WRITE count,!",
+      " QUIT"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {
+          "count": 4
+        },
+        "output": "",
+        "explain": "Establish the initial state."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "count": 5
+        },
+        "output": "",
+        "explain": "Increment rather than replacing with a constant."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "count": 5
+        },
+        "output": "5\n",
+        "explain": "Compare the actual result with the expected 5."
+      }
+    ],
+    "question": "What is the best first step when a result is wrong?",
+    "choices": [
+      "Delete the program",
+      "Compare expected and observed values",
+      "Change every instruction"
+    ],
+    "answer": 1,
+    "why": "An observable mismatch guides a focused repair.",
+    "task": "Repair each broken example in the construction lab.",
+    "lab": "construction",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "29"
+  },
+  {
+    "title": "Build a reusable calculator",
+    "topic": "Project",
+    "goal": "Combine a routine, parameters and a returned value.",
+    "intro": "Create a small calculator that adds two fictional quantities. Separate the calculation from display. Save as SSTCALC.m. Use small whole numbers so the output is easy to verify.",
+    "code": [
+      "SSTCALC",
+      " NEW apples,pears,total",
+      " SET apples=3,pears=4",
+      " SET total=$$sum(apples,pears)",
+      " WRITE \"Total: \",total,!",
+      " QUIT",
+      "sum(a,b)",
+      " QUIT a+b"
+    ],
+    "frames": [
+      {
+        "line": 1,
+        "memory": {},
+        "output": "",
+        "explain": "Protect the main routine's working names."
+      },
+      {
+        "line": 2,
+        "memory": {
+          "apples": 3,
+          "pears": 4
+        },
+        "output": "",
+        "explain": "Store the inputs."
+      },
+      {
+        "line": 3,
+        "memory": {
+          "apples": 3,
+          "pears": 4,
+          "a": 3,
+          "b": 4
+        },
+        "output": "",
+        "explain": "Pass the two values."
+      },
+      {
+        "line": 7,
+        "memory": {
+          "apples": 3,
+          "pears": 4,
+          "total": 7
+        },
+        "output": "",
+        "explain": "Return the sum and finish assignment."
+      },
+      {
+        "line": 4,
+        "memory": {
+          "apples": 3,
+          "pears": 4,
+          "total": 7
+        },
+        "output": "Total: 7\n",
+        "explain": "Display the result."
+      }
+    ],
+    "question": "Why separate sum from WRITE?",
+    "choices": [
+      "So the calculation can be reused",
+      "To make variables persistent",
+      "To avoid using parameters"
+    ],
+    "answer": 0,
+    "why": "A returned value can be used in many contexts.",
+    "task": "Save and run the routine with YottaDB, then change both inputs.",
+    "lab": "construction",
+    "minutes": 10,
+    "practice": "Predict the output, step through the trace, then try the linked laboratory.",
+    "reference": "langfeat.html",
+    "id": "30"
   }
 ];if(typeof module==='object'&&module.exports)module.exports=lessons;else root.SSTLessons=lessons;})(typeof window!=='undefined'?window:globalThis);
