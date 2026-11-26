@@ -244,8 +244,10 @@ Report reproducible issues with the browser, viewport, commit and synthetic step
 No standalone LICENSE file was found during the repository review. Do not assume a public repository grants permission to redistribute or modify its code. Existing source notices remain unchanged; licensing terms should be established by the repository owner before a wider release.
 
 
-## MUMPS Academy — Foundations 0.1
+## MUMPS Academy — Foundations 0.2
 
-Open `/learn` for ten beginner-first lessons. Guided instruction traces, memory diagrams, quizzes and progress tracking require no installation or account. Examples use standard MUMPS constructs with YottaDB as the implementation of choice. The browser demonstrations are prepared traces, not a runtime. `/learn/reference` explains local YottaDB execution. Learning progress is stored separately under `sst.academy.progress.v1`; personal backups do not include it. No arbitrary code execution endpoint is provided.
+Open `/learn` for twenty beginner-first lessons, including subscripted variables, sparse trees, `$DATA`, `$GET`, `$ORDER`, globals and a guided contact-directory project. The four interactive laboratories are at `/learn/lab` (trees, expressions, flow and memory). Lesson links connect the appropriate visual models to the curriculum.
 
-Academy routes are registered by `REG^SPACETEAM`; after syncing, restart/recompile the host route table. Browser coverage lives in `tests/browser/academy.spec.cjs`. Actual YottaDB example verification and live browser acceptance remain required before declaring the curriculum certified.
+The models are intentionally constrained demonstrations, not a general interpreter. Standard MUMPS constructs are taught first; YottaDB environment instructions are separately identified. Learning progress remains under `sst.academy.progress.v1`; existing lesson IDs 01–10 are unchanged. No tracker data or database is modified by the labs.
+
+Run `node tests/academy-model.test.cjs` and the existing Playwright suite. Actual YottaDB verification and live route acceptance remain separate from the fixture tests. See [Foundations 0.2](docs/ACADEMY_FOUNDATIONS_0_2.md) for scope and verification instructions.
