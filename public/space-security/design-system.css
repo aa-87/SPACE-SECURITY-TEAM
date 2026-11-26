@@ -29,3 +29,68 @@ main :is(.entry,.log-item,.journal-entry,.timeline-event){overflow-wrap:anywhere
 [data-demo=true] .tracker-menu-entry-count{display:none!important}
 @media(max-width:680px){.rc-welcome{grid-template-columns:1fr;padding-top:24px}.rc-welcome svg{display:none}.rc-section-nav{gap:5px}.rc-section-nav a{padding:0 9px;font-size:12px}.rc-actions a{font-size:12px}.sst-header .sst-nav>a{font-size:11px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* Product-wide quality checkpoint: mobile reflow and shared attribution. */
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+main,main :is(section,article,form,fieldset,div){min-width:0}
+main :is(input,select,textarea){min-width:0}
+main :is(button,.button,.btn){max-width:100%;white-space:normal;overflow-wrap:anywhere}
+main :is(p,h1,h2,h3,h4,small,pre){overflow-wrap:anywhere}
+main :is(img,svg,video){max-width:100%}
+.sst-attribution{width:min(1080px,90%);margin:28px auto 0;padding:22px 0 30px;border-top:1px solid var(--rc-line);color:var(--rc-muted);font:14px/1.6 system-ui,sans-serif}
+.sst-attribution strong{display:block;color:var(--rc-ink);font-size:15px}
+.sst-attribution p{margin:6px 0 12px}
+.sst-attribution-links{display:flex;flex-wrap:wrap;gap:8px}
+.sst-attribution a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:9px 14px;border:1px solid var(--rc-line);border-radius:7px;color:var(--rc-ink);text-decoration:none;font-weight:600}
+.sst-attribution a:hover{border-color:var(--rc-accent)}
+.sst-attribution a:focus-visible{outline:2px solid var(--rc-accent);outline-offset:3px}
+.sst-attribution svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7}
+.sst-stack-credit{font-size:13px;color:var(--rc-muted);line-height:1.6}
+.sst-stack-credit a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+main :is(.journal-form-note,.dashboard-disclaimer,.insight-footnote,.timeline-chart-note,.insight-empty,.activity-copy p){font-size:13px;line-height:1.6;color:var(--rc-muted)}
+main :is(.dashboard-stat>span,.dashboard-stat small,.timeline-metrics article>span,.timeline-metrics article small,.journal-form label,.timeline-controls label>span,.chart-legend,.timeline-legend){font-size:11px;line-height:1.5;color:var(--rc-muted)}
+main :is(.dashboard-status,.dashboard-stat,.timeline-metrics article){min-width:0}
+main :is(.chart-legend,.timeline-legend,.journal-form-actions,.backup-actions){flex-wrap:wrap}
+main .backup-import-label{min-height:44px;white-space:normal}
+@media(max-width:760px){
+ .sst-header{position:relative}
+ html{scroll-padding-top:16px}
+ .sst-header .sst-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .sst-header .sst-nav>a{justify-content:center;white-space:normal;text-align:center;font-size:12px;line-height:1.25;border:1px solid var(--sst-line);border-radius:5px;padding:6px 4px}
+ .sst-header .tracker-menu{grid-column:span 2;min-width:0}
+ .sst-header .tracker-menu summary{justify-content:center;white-space:normal;width:100%;min-height:44px}
+ .sst-header .tracker-menu-panel{max-height:min(65vh,460px)}
+ .sst-header .sst-brand{min-width:0;gap:10px}
+ .sst-header .sst-brand-name{white-space:normal;letter-spacing:.7px;font-size:10px}
+ .sst-header .sst-brand-name span{font-size:8px;letter-spacing:.4px}
+ .sst-header .sst-theme-toggle{padding:8px;white-space:normal}
+ .rc-section-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .rc-section-nav a{justify-content:center;text-align:center;font-size:13px}
+ .rc-section-nav a:last-child{grid-column:1/-1}
+ .rc-actions a{flex:1 1 140px;justify-content:center;text-align:center}
+ main :is(.dashboard-stats,.timeline-metrics,.stats){grid-template-columns:repeat(2,minmax(0,1fr))}
+ main :is(.journal-list-controls,.backup-actions){display:flex;flex-direction:column;align-items:stretch}
+ main .journal-list-controls :is(input,select){width:100%;max-width:none}
+ main .journal-list{max-height:none}
+ main .activity-controls{flex-wrap:wrap}
+ main :is(.activity-filter,.journal-entry-actions button){min-height:44px;font-size:11px}
+ main .timeline-controls{grid-template-columns:minmax(0,1fr)}
+ main .timeline-controls .timeline-search{grid-column:auto}
+ main .timeline-day-events{min-width:0}
+ main :is(.log-item,.history .entry){grid-template-columns:minmax(0,1fr)}
+ main .log-item{gap:8px}
+ main .log-item button,main .history .entry button{min-height:44px}
+ main .entry p{font-size:14px;line-height:1.6}
+ main .academy-variable{flex-wrap:wrap}
+ main .lab-nav a{flex:1 1 130px;display:flex;align-items:center;justify-content:center;text-align:center}
+}
+@media(max-width:360px){
+ .sst-header .sst-brand-mark{width:22px;height:22px}
+ .sst-header .sst-theme-toggle{font-size:10px}
+ main :is(.dashboard-stats,.timeline-metrics,.stats){grid-template-columns:minmax(0,1fr)}
+ main .timeline-metrics article{border-right:0}
+ main :is(.academy-panel-head,.journal-form-top,.timeline-topline,.section-head){flex-wrap:wrap}
+ .sst-attribution a{width:100%}
+}
+@media(max-height:500px) and (orientation:landscape){.sst-header{position:relative}.sst-header .tracker-menu-panel{max-height:55vh}html{scroll-padding-top:16px}}
