@@ -11,7 +11,9 @@ SSTJOURNAL ; Beginner learning project - disposable database only
  . IF action="C" SET result=$$save(id,title,body,0)
  . IF action="U" SET result=$$save(id,title,body,1)
  . IF action="R" SET result=$$read(id)
- . IF action="D" SET result=$$remove(id)
+ . IF action="D" DO
+ . . READ !,"Delete this fictional entry (Y/N)? ",result
+ . . SET result=$SELECT(result="Y":$remove(id),1:"Canceled")
  . WRITE !,result,!
  QUIT
 valid(id,title,body)
@@ -24,7 +26,7 @@ save(id,title,body,update)
  NEW result,exists
  SET result=$$valid(id,title,body)
  IF result'="OK" QUIT result
- TSTART ()
+ TSTART *
  SET exists=$DATA(^SSTLearn("journal05",id))>0
  IF exists,'update TROLLBACK  QUIT "Already exists"
  IF 'exists,update TROLLBACK  QUIT "Missing"
