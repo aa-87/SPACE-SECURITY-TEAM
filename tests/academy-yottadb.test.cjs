@@ -31,7 +31,7 @@ try{
  run([' READ name',' WRITE name,!'],'Alex','Alex\n');
  // Use an isolated global namespace supplied by the curriculum. Verify persistence
  // across two fresh M processes; no KILL of a production/global tree.
- run([' SET ^SSTLearn("message")="Saved"'],'');
+ run(lessons[17].code.map(s=>' '+s),lessons[17].frames.at(-1).output);
  run([' WRITE $GET(message,"Missing local"),!',' WRITE $GET(^SSTLearn("message"),"Missing global"),!'],'Missing local\nSaved\n');
  // Contact project requires fresh database; its listing must contain exactly two names.
  run(routine(lessons[19].code),lessons[19].frames.at(-1).output);
