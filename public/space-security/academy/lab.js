@@ -9,8 +9,17 @@ const kind=path.split('/')[3];const current=labs.find(x=>x[0]===kind);
 function node(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
 function el(tag,text,cls,parent=host){const n=node(tag,text,cls);parent.append(n);return n}
 function button(text,fn,parent=host){const n=el('button',text,'',parent);n.type='button';n.onclick=fn;return n}
-function select(label,values,parent){const l=el('label',label,'lab-field',parent),s=el('select',undefined,'',l);values.forEach(([v,t])=>{const o=el('option',t,'',s);o.value=v});return s}
-function input(label,value,parent,type='text'){const l=el('label',label,'lab-field',parent),i=el('input',undefined,'',l);i.type=type;i.value=value;i.maxLength=120;return i}
+// Keep option text outside the label so accessible names are stable.
+let fieldSequence=0;
+function fieldControl(label,tag,parent){
+ const field=el('div',undefined,'lab-field',parent);
+ const l=el('label',label,'',field),control=el(tag,undefined,'',field);
+ control.id='academy-lab-field-'+(++fieldSequence);
+ l.htmlFor=control.id;
+ return control;
+}
+function select(label,values,parent){const s=fieldControl(label,'select',parent);values.forEach(([v,t])=>{const o=el('option',t,'',s);o.value=v});return s}
+function input(label,value,parent,type='text'){const i=fieldControl(label,'input',parent);i.type=type;i.value=value;i.maxLength=120;return i}
 function panel(title,parent=host){const p=el('section',undefined,'lab-panel',parent);el('h2',title,'',p);return p}
 function code(parent){return el('pre','','lab-code',parent)}
 function status(parent){const p=el('p','','lab-status',parent);p.setAttribute('role','status');return p}
