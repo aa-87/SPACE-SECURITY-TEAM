@@ -23,6 +23,8 @@
   function init(){
     var menu=document.getElementById('trackerMenu'),toggle=document.getElementById('trackerMenuToggle'),theme=document.getElementById('themeToggle');
     if(!menu||!toggle||!theme)return;
+    var menuCount=menu.querySelector('.tracker-menu-count');if(menuCount)menuCount.textContent=String(menu.querySelectorAll('.tracker-menu-panel a').length).padStart(2,'0');
+    document.querySelectorAll('.sst-nav>a').forEach(function(a){if(a.pathname==='/learn'&&location.pathname.startsWith('/learn'))a.setAttribute('aria-current','page')});
     function count(id,k,object){
       var node=document.getElementById(id);if(!node)return;
       try{var raw=localStorage.getItem(k),data=raw?JSON.parse(raw):[];if(object&&raw)data=data.entries;if(!Array.isArray(data))throw Error();var n=data.length;node.textContent=n+' ENTR'+(n===1?'Y':'IES')}catch(e){node.textContent='COUNT UNAVAILABLE'}
