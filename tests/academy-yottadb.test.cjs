@@ -25,7 +25,7 @@ try{
  for(const l of lessons){
   const id=Number(l.id);
   if([6,18,19,20].includes(id))continue;
-  const lines=id===10||id>=21?routine(l.code):l.code.map(s=>' '+s);
+  const lines=id===10||(id>=21&&id<=30)||id===40?routine(l.code):l.code.map(s=>' '+s);
   run(lines,l.frames.at(-1).output);
  }
  run([' READ name',' WRITE name,!'],'Alex','Alex\n');
@@ -39,5 +39,19 @@ try{
   const t=model.trace(mode,n);run(routine(t.code),t.frames.at(-1).out);
  }
  model.challenges.forEach((c,i)=>c.choices.forEach((_,j)=>{const t=model.construct(i,j);run(routine(t.code),t.output)}));
+ // Compare constrained string model output with real M for fixed examples.
+ const strings=require('../public/space-security/academy/string-model.js');
+ for(const [op,text,opt] of [
+ ['length','',{}],['extract','MUMPS',{start:2,end:4}],
+ ['find','abcabc',{needle:'abc',start:2}],
+ ['piece','A||B|',{delimiter:'|',start:2,end:4}],
+ ['pieces','',{delimiter:'|'}],
+ ['replacePiece','A||B',{delimiter:'|',start:2,replacement:'X'}],
+ ['replaceChar','ABC',{start:2,replacement:'x'}],
+ ['translate','a-b',{from:'-',to:''}]
+ ]){const t=strings.evaluate(op,text,opt);run(t.code.split('\n').map(s=>' '+s),String(t.value))}
+ for(const [text,pattern] of [['123','3N'],['A12','1U2N'],['a12','1U2N'],['12-34','2N1"-"2N']]){
+ const t=strings.match(text,pattern);run([' '+t.code],String(t.value))}
+ for(const n of [0,5,6,10,11,20]){const t=strings.select(n);run(t.code.split('\n').map(s=>' '+s),t.value)}
  console.log('Actual YottaDB checks passed: '+passed);
 }finally{fs.rmSync(dir,{recursive:true,force:true})}
