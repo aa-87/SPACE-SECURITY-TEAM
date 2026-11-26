@@ -43,3 +43,6 @@ html{scroll-padding-top:100px}
 @media(max-width:760px){html{scroll-padding-top:132px}.sst-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;padding:10px 5%;min-height:0}.sst-header>.sst-brand{grid-column:1;grid-row:1}.sst-header .sst-theme-toggle{grid-column:2;grid-row:1}.sst-header .sst-nav{grid-column:1/-1;grid-row:2;justify-content:space-between;gap:8px;min-width:0;flex-wrap:wrap}.sst-header .sst-nav>a{font-size:12px;min-height:44px}.sst-header .tracker-menu{position:static}.sst-header .tracker-menu summary{padding:9px 12px}.sst-header .tracker-menu-panel{top:calc(100% + 4px);left:5%;right:5%;width:auto;max-height:min(65vh,460px)}}
 @media(max-width:350px){.sst-header .sst-nav{gap:5px 8px}.sst-header .tracker-menu summary{font-size:12px;gap:6px;padding:8px}.sst-header .tracker-menu-count{display:none}.sst-header .tracker-menu-panel{left:3%;right:3%}}
 @media(prefers-reduced-motion:reduce){.sst-header .tracker-menu summary svg{transition:none}}
+
+/* Allow the education link to wrap alongside the shared navigation. */
+@media(max-width:1100px){.sst-header .sst-nav{flex-wrap:wrap;gap:8px 14px}}
