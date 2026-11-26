@@ -7,6 +7,7 @@ if(process.env.SST_LEARNING_DATABASE!=='YES'||!process.env.ydb_gbldir||!process.
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'sst-academy-'));
 const exe=path.join(process.env.ydb_dist,'yottadb');
 const env={...process.env,ydb_routines:dir,gtmroutines:dir};
+const project=fs.readFileSync(path.join(__dirname,'../public/space-security/academy/projects/SSTJOURNAL.m.txt'),'utf8');
 let passed=0;
 function run(lines,expected,input=''){
  const name='SSTVERIFY';
@@ -14,6 +15,7 @@ function run(lines,expected,input=''){
  // Remove compiled object before each different test source.
  for(const f of fs.readdirSync(dir))fs.unlinkSync(path.join(dir,f));
  fs.writeFileSync(path.join(dir,name+'.m'),source);
+ fs.writeFileSync(path.join(dir,'SSTJOURNAL.m'),project+'\n');
  const r=spawnSync(exe,['-run','^'+name],{cwd:dir,env,input,encoding:'utf8',timeout:10000,maxBuffer:1024*1024});
  if(r.error||r.status!==0)throw Error('YottaDB execution failed: '+(r.error||r.stderr||r.stdout));
  assert.equal(r.stdout.replace(/\r\n/g,'\n').trimEnd(),expected.trimEnd(),source);passed++;
@@ -25,7 +27,7 @@ try{
  for(const l of lessons){
   const id=Number(l.id);
   if([6,18,19,20].includes(id))continue;
-  const lines=id===10||(id>=21&&id<=30)||id===40?routine(l.code):l.code.map(s=>' '+s);
+  const lines=id===10||(id>=21&&id<=30)||id===40||(id>=46&&id<=49)?routine(l.code):l.code.map(s=>' '+s);
   run(lines,l.frames.at(-1).output);
  }
  run([' READ name',' WRITE name,!'],'Alex','Alex\n');
@@ -53,5 +55,11 @@ try{
  for(const [text,pattern] of [['123','3N'],['A12','1U2N'],['a12','1U2N'],['12-34','2N1"-"2N']]){
  const t=strings.match(text,pattern);run([' '+t.code],String(t.value))}
  for(const n of [0,5,6,10,11,20]){const t=strings.select(n);run(t.code.split('\n').map(s=>' '+s),t.value)}
+ // Fresh disposable database required; use a fictional record only.
+ run([' WRITE $save^SSTJOURNAL("J901","A","B",0),!'],'Saved');
+ run([' WRITE $save^SSTJOURNAL("J901","X","Y",0),!',' WRITE $read^SSTJOURNAL("J901"),!'],'Already exists\nA|B');
+ run([' WRITE $save^SSTJOURNAL("J901","","B",1),!',' WRITE $read^SSTJOURNAL("J901"),!'],'Invalid title\nA|B');
+ run([' WRITE $save^SSTJOURNAL("J901","C","D",1),!'],'Saved');
+ run([' WRITE $read^SSTJOURNAL("J901"),!',' WRITE $remove^SSTJOURNAL("J901"),!',' WRITE $read^SSTJOURNAL("J901"),!'],'C|D\nDeleted\nMissing');
  console.log('Actual YottaDB checks passed: '+passed);
 }finally{fs.rmSync(dir,{recursive:true,force:true})}
